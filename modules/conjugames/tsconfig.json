@@ -1,0 +1,37 @@
+{
+    "extends": "../../bazel-conjugames/external/valdi/modules/_configs/base.tsconfig.json",
+    "compilerOptions": {
+        "paths": {
+            "conjugames/*": [
+                "./*",
+                "../../bazel-out/darwin_arm64-fastbuild/bin/modules/conjugames/.valdi_build/projectsync/generated_ts/conjugames/*"
+            ],
+            "jasmine/*": [
+                "../../bazel-conjugames/external/valdi/src/valdi_modules/src/valdi/jasmine/*"
+            ],
+            "coreutils/*": [
+                "../../bazel-conjugames/external/valdi/src/valdi_modules/src/valdi/coreutils/*"
+            ],
+            "source_map/*": [
+                "../../bazel-conjugames/external/valdi/src/valdi_modules/src/valdi/source_map/*"
+            ],
+            "valdi_tsx/*": [
+                "../../bazel-conjugames/external/valdi/src/valdi_modules/src/valdi/valdi_tsx/*"
+            ],
+            "valdi_core/*": [
+                "../../bazel-conjugames/external/valdi/src/valdi_modules/src/valdi/valdi_core/*"
+            ],
+            "tslib": [
+                "../../bazel-conjugames/external/valdi/src/valdi_modules/src/valdi/valdi_core/src/tslib"
+            ]
+        },
+        "types": [
+            "../../bazel-conjugames/external/valdi/modules/types/Long",
+            "../../bazel-conjugames/external/valdi/modules/types/globals"
+        ],
+        "rootDirs": [
+            "..",
+            "../../bazel-out/darwin_arm64-fastbuild/bin/modules/conjugames/.valdi_build/projectsync/generated_ts"
+        ]
+    }
+}

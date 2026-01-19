@@ -1,0 +1,19 @@
+load("@valdi//bzl/valdi:valdi_application.bzl", "valdi_application")
+load("@valdi//bzl/valdi:valdi_exported_library.bzl", "valdi_exported_library")
+
+valdi_application(
+    name = "conjugames_app",
+    ios_bundle_id = "com.website.conjugames",
+    ios_families = ["iphone"],
+    root_component_path = "App@conjugames/src/App",
+    title = "conjugames",
+    version = "1.0.0",
+    deps = ["//modules/conjugames"],
+)
+
+valdi_exported_library(
+    name = "conjugames_export",
+    ios_bundle_id = "com.website.conjugames.lib",
+    ios_bundle_name = "Conjugames",
+    deps = ["//modules/conjugames"],
+)
