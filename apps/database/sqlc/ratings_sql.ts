@@ -1,4 +1,7 @@
-import { Client } from 'pg'
+interface Client {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  query: (text: string, values?: any[]) => Promise<{ rows: any[] }>
+}
 
 export interface QuestionRatingRow {
   id: number
@@ -26,8 +29,15 @@ ON CONFLICT (user_id, question_id) DO UPDATE SET rating = EXCLUDED.rating
 RETURNING *
 `
 
-export async function upsertQuestionRating(client: Client, args: UpsertQuestionRatingArgs): Promise<QuestionRatingRow> {
-  const result = await client.query(upsertQuestionRatingQuery, [args.user_id, args.question_id, args.rating])
+export async function upsertQuestionRating(
+  client: Client,
+  args: UpsertQuestionRatingArgs,
+): Promise<QuestionRatingRow> {
+  const result = await client.query(upsertQuestionRatingQuery, [
+    args.user_id,
+    args.question_id,
+    args.rating,
+  ])
   return result.rows[0]
 }
 
@@ -35,8 +45,14 @@ const getQuestionRatingQuery = `
 SELECT * FROM question_ratings WHERE user_id = $1 AND question_id = $2 LIMIT 1
 `
 
-export async function getQuestionRating(client: Client, args: { user_id: string; question_id: number }): Promise<QuestionRatingRow | null> {
-  const result = await client.query(getQuestionRatingQuery, [args.user_id, args.question_id])
+export async function getQuestionRating(
+  client: Client,
+  args: { user_id: string; question_id: number },
+): Promise<QuestionRatingRow | null> {
+  const result = await client.query(getQuestionRatingQuery, [
+    args.user_id,
+    args.question_id,
+  ])
   return result.rows.length > 0 ? result.rows[0] : null
 }
 
@@ -45,7 +61,10 @@ SELECT AVG(rating)::decimal AS avg_rating, COUNT(*)::int AS rating_count
 FROM question_ratings WHERE question_id = $1
 `
 
-export async function getAverageRatingForQuestion(client: Client, args: { question_id: number }): Promise<AverageRatingRow> {
+export async function getAverageRatingForQuestion(
+  client: Client,
+  args: { question_id: number },
+): Promise<AverageRatingRow> {
   const result = await client.query(getAverageRatingQuery, [args.question_id])
   return result.rows[0]
 }

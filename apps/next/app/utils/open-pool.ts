@@ -12,7 +12,7 @@ const pool = new Pool(
         user: process.env.DATABASE_USER || 'root',
         port: parseInt(process.env.DATABASE_PORT || '5498'),
         password: process.env.DATABASE_SECRET || 'secret',
-        database: process.env.DATABASE_NAME || 'starter-app',
+        database: process.env.DATABASE_NAME || 'conjugame',
         max: 20,
         idleTimeoutMillis: 30000,
         connectionTimeoutMillis: 2000,

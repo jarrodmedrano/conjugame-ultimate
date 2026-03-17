@@ -12,7 +12,7 @@ const pool = new Pool({
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
-  database: process.env.DATABASE_NAME || 'starter-app',
+  database: process.env.DATABASE_NAME || 'conjugame',
 })
 
 const authConfig = {

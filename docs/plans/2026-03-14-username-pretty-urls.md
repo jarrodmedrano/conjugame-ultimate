@@ -1161,7 +1161,7 @@ git commit -m "fix: update remaining userId references to use username in URLs"
 Before opening a PR, verify:
 
 - [ ] New user registration requires a username (3-30 chars, alphanumeric/hyphen/underscore)
-- [ ] `https://story-bible.com/johndoe/stories/new-story` works in incognito (public view)
+- [ ] `https://conjugame.org/johndoe/stories/new-story` works in incognito (public view)
 - [ ] Old UUID URL redirects 301 to username URL
 - [ ] Username is shown in profile settings and can be edited
 - [ ] Changing username redirects to the new URL

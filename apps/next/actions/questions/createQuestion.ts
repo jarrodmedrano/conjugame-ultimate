@@ -5,9 +5,13 @@ import { createQuestion } from '@repo/database'
 import pool from '../../app/utils/open-pool'
 import { CreateQuestionSchema } from '@repo/schema'
 
-export default async function createQuestionAction(input: unknown) {
+export default async function createQuestionAction(
+  input: unknown,
+): Promise<Record<string, unknown>> {
   const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.user || session.user.role !== 'admin') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sessionUser = session?.user as any
+  if (!sessionUser || sessionUser.role !== 'admin') {
     return { error: 'Unauthorized' }
   }
   const parsed = CreateQuestionSchema.safeParse(input)

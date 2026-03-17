@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { SUPPORTED_LANGUAGES } from './verb'
 
 export const DIFFICULTY_LEVELS = ['easy', 'medium', 'hard'] as const
-export type DifficultyLevel = typeof DIFFICULTY_LEVELS[number]
+export type DifficultyLevel = (typeof DIFFICULTY_LEVELS)[number]
 
 export const AnswerSchema = z.object({
   text: z.string().min(1),

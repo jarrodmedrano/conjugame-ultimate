@@ -69,7 +69,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 - **Image Limits:** 2MB max file size, 1200x1200px max dimensions
 - **Formats:** JPG and PNG only
 - **Gallery:** 1 primary image + up to 6 gallery images per entity
-- **Storage:** All images hosted on Cloudinary CDN in the `story-bible` folder
+- **Storage:** All images hosted on Cloudinary CDN in the `conjugame` folder
 
 ### 5. API Endpoints
 

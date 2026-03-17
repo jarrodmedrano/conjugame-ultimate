@@ -15,7 +15,7 @@ migratedown:
 sqlc:
 	sqlc generate
 tunnel:
-	ssh -N -L 127.0.0.1:5433:dokku-postgres-storybible-db:5432 dokku@${DOKKU_SERVER} \
+	ssh -N -L 127.0.0.1:5433:dokku-postgres-conjugame-db:5432 dokku@${DOKKU_SERVER} \
 		-o ExitOnForwardFailure=yes \
 		-o ServerAliveInterval=60 \
 		-o ServerAliveCountMax=3 \

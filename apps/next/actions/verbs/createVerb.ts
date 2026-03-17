@@ -5,9 +5,13 @@ import { createVerb } from '@repo/database'
 import pool from '../../app/utils/open-pool'
 import { CreateVerbSchema } from '@repo/schema'
 
-export default async function createVerbAction(input: unknown) {
+export default async function createVerbAction(
+  input: unknown,
+): Promise<Record<string, unknown>> {
   const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.user || session.user.role !== 'admin') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sessionUser = session?.user as any
+  if (!sessionUser || sessionUser.role !== 'admin') {
     return { error: 'Unauthorized' }
   }
   const parsed = CreateVerbSchema.safeParse(input)

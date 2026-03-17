@@ -422,7 +422,7 @@ export interface UpdateUserArgs {
   email: string
   emailverified: boolean | null
   image: string | null
-  avatar_url: string | null
+  avatar_url?: string | null
   slug: string | null
   role: string | null
   istwofactorenabled: boolean | null
@@ -458,7 +458,7 @@ export async function updateUser(
       args.email,
       args.emailverified,
       args.image,
-      args.avatar_url,
+      args.avatar_url ?? null,
       args.slug,
       args.role,
       args.istwofactorenabled,
@@ -655,6 +655,177 @@ export async function checkUsernameExists(
   return { exists: result.rows[0][0] }
 }
 
+export const createVerificationQuery = `-- name: CreateVerification :one
+INSERT INTO verifications (id, identifier, value, "expiresAt", "createdAt", "updatedAt")
+VALUES ($1, $2, $3, $4, NOW(), NOW())
+RETURNING id, identifier, value, "expiresAt", "createdAt", "updatedAt"`
+
+export interface CreateVerificationArgs {
+  id: string
+  identifier: string
+  value: string
+  expiresat: Date
+}
+
+export interface VerificationRow {
+  id: string
+  identifier: string
+  value: string
+  expiresat: Date
+  createdat: Date
+  updatedat: Date
+}
+
+// Type aliases for named query row types
+export type GetVerificationRow = VerificationRow
+export type GetVerificationByValueRow = VerificationRow
+export type GetVerificationByIdRow = VerificationRow
+
+export async function createVerification(
+  client: Client,
+  args: CreateVerificationArgs,
+): Promise<VerificationRow | null> {
+  const result = await client.query({
+    text: createVerificationQuery,
+    values: [args.id, args.identifier, args.value, args.expiresat],
+    rowMode: 'array',
+  })
+  if (result.rows.length !== 1) {
+    return null
+  }
+  const row = result.rows[0]
+  return {
+    id: row[0],
+    identifier: row[1],
+    value: row[2],
+    expiresat: row[3],
+    createdat: row[4],
+    updatedat: row[5],
+  }
+}
+
+export const getVerificationQuery = `-- name: GetVerification :one
+SELECT id, identifier, value, "expiresAt", "createdAt", "updatedAt" FROM verifications WHERE identifier = $1 AND value = $2 LIMIT 1`
+
+export interface GetVerificationArgs {
+  identifier: string
+  value: string
+}
+
+export async function getVerification(
+  client: Client,
+  args: GetVerificationArgs,
+): Promise<VerificationRow | null> {
+  const result = await client.query({
+    text: getVerificationQuery,
+    values: [args.identifier, args.value],
+    rowMode: 'array',
+  })
+  if (result.rows.length !== 1) {
+    return null
+  }
+  const row = result.rows[0]
+  return {
+    id: row[0],
+    identifier: row[1],
+    value: row[2],
+    expiresat: row[3],
+    createdat: row[4],
+    updatedat: row[5],
+  }
+}
+
+export const getVerificationByValueQuery = `-- name: GetVerificationByValue :one
+SELECT id, identifier, value, "expiresAt", "createdAt", "updatedAt" FROM verifications WHERE value = $1 LIMIT 1`
+
+export interface GetVerificationByValueArgs {
+  value: string
+}
+
+export async function getVerificationByValue(
+  client: Client,
+  args: GetVerificationByValueArgs,
+): Promise<VerificationRow | null> {
+  const result = await client.query({
+    text: getVerificationByValueQuery,
+    values: [args.value],
+    rowMode: 'array',
+  })
+  if (result.rows.length !== 1) {
+    return null
+  }
+  const row = result.rows[0]
+  return {
+    id: row[0],
+    identifier: row[1],
+    value: row[2],
+    expiresat: row[3],
+    createdat: row[4],
+    updatedat: row[5],
+  }
+}
+
+export const getVerificationByIdQuery = `-- name: GetVerificationById :one
+SELECT id, identifier, value, "expiresAt", "createdAt", "updatedAt" FROM verifications WHERE id = $1 LIMIT 1`
+
+export interface GetVerificationByIdArgs {
+  id: string
+}
+
+export async function getVerificationById(
+  client: Client,
+  args: GetVerificationByIdArgs,
+): Promise<VerificationRow | null> {
+  const result = await client.query({
+    text: getVerificationByIdQuery,
+    values: [args.id],
+    rowMode: 'array',
+  })
+  if (result.rows.length !== 1) {
+    return null
+  }
+  const row = result.rows[0]
+  return {
+    id: row[0],
+    identifier: row[1],
+    value: row[2],
+    expiresat: row[3],
+    createdat: row[4],
+    updatedat: row[5],
+  }
+}
+
+export const deleteVerificationQuery = `-- name: DeleteVerification :exec
+DELETE FROM verifications WHERE id = $1`
+
+export interface DeleteVerificationArgs {
+  id: string
+}
+
+export async function deleteVerification(
+  client: Client,
+  args: DeleteVerificationArgs,
+): Promise<void> {
+  await client.query({
+    text: deleteVerificationQuery,
+    values: [args.id],
+    rowMode: 'array',
+  })
+}
+
+export const deleteExpiredVerificationsQuery = `-- name: DeleteExpiredVerifications :exec
+DELETE FROM verifications WHERE "expiresAt" < NOW()`
+
+export async function deleteExpiredVerifications(
+  client: Client,
+): Promise<void> {
+  await client.query({
+    text: deleteExpiredVerificationsQuery,
+    values: [],
+    rowMode: 'array',
+  })
+}
+
 export const createSessionQuery = `-- name: CreateSession :one
 INSERT INTO sessions (id, "userId", token, "expiresAt", "ipAddress", "userAgent", "createdAt", "updatedAt")
 VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -710,4 +881,217 @@ export async function createSession(
     createdat: row[6],
     updatedat: row[7],
   }
+}
+
+export const createAccountQuery = `-- name: CreateAccount :one
+INSERT INTO accounts (id, "userId", "accountId", "providerId", "accessToken", "refreshToken", "accessTokenExpiresAt", "refreshTokenExpiresAt", "idToken", scope, password, "createdAt", "updatedAt")
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())
+RETURNING id, "userId", "accountId", "providerId", "accessToken", "refreshToken", "accessTokenExpiresAt", "refreshTokenExpiresAt", "idToken", scope, password, "createdAt", "updatedAt"`
+
+export interface CreateAccountArgs {
+  id: string
+  userid: string
+  accountid: string
+  providerid: string
+  accesstoken: string | null
+  refreshtoken: string | null
+  accesstokenexpiresat: Date | null
+  refreshtokenexpiresat: Date | null
+  idtoken: string | null
+  scope: string | null
+  password: string | null
+}
+
+export interface AccountRow {
+  id: string
+  userid: string
+  accountid: string
+  providerid: string
+  accesstoken: string | null
+  refreshtoken: string | null
+  accesstokenexpiresat: Date | null
+  refreshtokenexpiresat: Date | null
+  idtoken: string | null
+  scope: string | null
+  password: string | null
+  createdat: Date
+  updatedat: Date
+}
+
+export type CreateAccountRow = AccountRow
+
+export async function createAccount(
+  client: Client,
+  args: CreateAccountArgs,
+): Promise<AccountRow | null> {
+  const result = await client.query({
+    text: createAccountQuery,
+    values: [
+      args.id,
+      args.userid,
+      args.accountid,
+      args.providerid,
+      args.accesstoken,
+      args.refreshtoken,
+      args.accesstokenexpiresat,
+      args.refreshtokenexpiresat,
+      args.idtoken,
+      args.scope,
+      args.password,
+    ],
+    rowMode: 'array',
+  })
+  if (result.rows.length !== 1) {
+    return null
+  }
+  const row = result.rows[0]
+  return {
+    id: row[0],
+    userid: row[1],
+    accountid: row[2],
+    providerid: row[3],
+    accesstoken: row[4],
+    refreshtoken: row[5],
+    accesstokenexpiresat: row[6],
+    refreshtokenexpiresat: row[7],
+    idtoken: row[8],
+    scope: row[9],
+    password: row[10],
+    createdat: row[11],
+    updatedat: row[12],
+  }
+}
+
+export const getAccountQuery = `-- name: GetAccount :one
+SELECT id, "userId", "accountId", "providerId", "accessToken", "refreshToken", "accessTokenExpiresAt", "refreshTokenExpiresAt", "idToken", scope, password, "createdAt", "updatedAt" FROM accounts WHERE id = $1 LIMIT 1`
+
+export interface GetAccountArgs {
+  id: string
+}
+
+export type GetAccountRow = AccountRow
+
+export async function getAccount(
+  client: Client,
+  args: GetAccountArgs,
+): Promise<AccountRow | null> {
+  const result = await client.query({
+    text: getAccountQuery,
+    values: [args.id],
+    rowMode: 'array',
+  })
+  if (result.rows.length !== 1) {
+    return null
+  }
+  const row = result.rows[0]
+  return {
+    id: row[0],
+    userid: row[1],
+    accountid: row[2],
+    providerid: row[3],
+    accesstoken: row[4],
+    refreshtoken: row[5],
+    accesstokenexpiresat: row[6],
+    refreshtokenexpiresat: row[7],
+    idtoken: row[8],
+    scope: row[9],
+    password: row[10],
+    createdat: row[11],
+    updatedat: row[12],
+  }
+}
+
+export const getAccountByProviderQuery = `-- name: GetAccountByProvider :one
+SELECT id, "userId", "accountId", "providerId", "accessToken", "refreshToken", "accessTokenExpiresAt", "refreshTokenExpiresAt", "idToken", scope, password, "createdAt", "updatedAt" FROM accounts WHERE "userId" = $1 AND "providerId" = $2 LIMIT 1`
+
+export interface GetAccountByProviderArgs {
+  userid: string
+  providerid: string
+}
+
+export type GetAccountByProviderRow = AccountRow
+
+export async function getAccountByProvider(
+  client: Client,
+  args: GetAccountByProviderArgs,
+): Promise<AccountRow | null> {
+  const result = await client.query({
+    text: getAccountByProviderQuery,
+    values: [args.userid, args.providerid],
+    rowMode: 'array',
+  })
+  if (result.rows.length !== 1) {
+    return null
+  }
+  const row = result.rows[0]
+  return {
+    id: row[0],
+    userid: row[1],
+    accountid: row[2],
+    providerid: row[3],
+    accesstoken: row[4],
+    refreshtoken: row[5],
+    accesstokenexpiresat: row[6],
+    refreshtokenexpiresat: row[7],
+    idtoken: row[8],
+    scope: row[9],
+    password: row[10],
+    createdat: row[11],
+    updatedat: row[12],
+  }
+}
+
+export const listAccountsForUserQuery = `-- name: ListAccountsForUser :many
+SELECT id, "userId", "accountId", "providerId", "accessToken", "refreshToken", "accessTokenExpiresAt", "refreshTokenExpiresAt", "idToken", scope, password, "createdAt", "updatedAt" FROM accounts WHERE "userId" = $1 ORDER BY id LIMIT $2 OFFSET $3`
+
+export interface ListAccountsForUserArgs {
+  userid: string
+  limit: string
+  offset: string
+}
+
+export type ListAccountsForUserRow = AccountRow
+
+export async function listAccountsForUser(
+  client: Client,
+  args: ListAccountsForUserArgs,
+): Promise<AccountRow[]> {
+  const result = await client.query({
+    text: listAccountsForUserQuery,
+    values: [args.userid, args.limit, args.offset],
+    rowMode: 'array',
+  })
+  return result.rows.map((row) => ({
+    id: row[0],
+    userid: row[1],
+    accountid: row[2],
+    providerid: row[3],
+    accesstoken: row[4],
+    refreshtoken: row[5],
+    accesstokenexpiresat: row[6],
+    refreshtokenexpiresat: row[7],
+    idtoken: row[8],
+    scope: row[9],
+    password: row[10],
+    createdat: row[11],
+    updatedat: row[12],
+  }))
+}
+
+export const deleteAccountQuery = `-- name: DeleteAccount :exec
+DELETE FROM accounts WHERE id = $1`
+
+export interface DeleteAccountArgs {
+  id: string
+}
+
+export async function deleteAccount(
+  client: Client,
+  args: DeleteAccountArgs,
+): Promise<void> {
+  await client.query({
+    text: deleteAccountQuery,
+    values: [args.id],
+    rowMode: 'array',
+  })
 }

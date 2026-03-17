@@ -1,8 +1,8 @@
 {
   "name": "conjugame-ultimate",
-  "description": "Conjugame - verb conjugation quiz game monorepo",
   "version": "1.0.0",
   "private": true,
+  "description": "Conjugame - verb conjugation quiz game monorepo",
   "workspaces": [
     "apps/*",
     "packages/*"

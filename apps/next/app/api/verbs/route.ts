@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAllVerbs, getVerbsByLanguage } from '../../../actions/verbs/getVerbs'
+import {
+  getAllVerbs,
+  getVerbsByLanguage,
+} from '../../../actions/verbs/getVerbs'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)

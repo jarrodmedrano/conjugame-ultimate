@@ -16,7 +16,7 @@ export interface SidebarSection {
   title: string
   icon: LucideIcon | string
   items: EntityItem[]
-  createHref: string
+  createHref?: string
   moreHref: string
 }
 

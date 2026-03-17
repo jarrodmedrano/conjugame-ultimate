@@ -3,7 +3,6 @@ import { requireAuth } from '../../../../lib/auth-middleware'
 import { rateLimit, RateLimitConfigs } from '../../../../lib/rate-limit'
 import pool from '../../../utils/open-pool'
 import { getSubscriptionByUserId } from '@repo/database'
-import { PREVIEW_LIMITS } from '../../../../lib/subscription'
 
 /**
  * GET /api/subscription/status
@@ -32,7 +31,7 @@ export async function GET(request: NextRequest) {
         status: subscription?.status ?? 'inactive',
         cancelAtPeriodEnd: subscription?.cancelAtPeriodEnd ?? false,
         currentPeriodEnd: subscription?.currentPeriodEnd ?? null,
-        previewLimits: PREVIEW_LIMITS,
+        previewLimits: { stories: 3, conjugations: 10 },
       })
     } finally {
       client.release()

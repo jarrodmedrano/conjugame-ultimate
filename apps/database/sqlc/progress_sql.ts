@@ -1,4 +1,7 @@
-import { Client } from 'pg'
+interface Client {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  query: (text: string, values?: any[]) => Promise<{ rows: any[] }>
+}
 
 export interface UserProgressRow {
   id: number
@@ -60,9 +63,16 @@ VALUES ($1, $2, $3, $4, $5)
 RETURNING *
 `
 
-export async function createUserProgress(client: Client, args: CreateUserProgressArgs): Promise<UserProgressRow> {
+export async function createUserProgress(
+  client: Client,
+  args: CreateUserProgressArgs,
+): Promise<UserProgressRow> {
   const result = await client.query(createUserProgressQuery, [
-    args.user_id, args.language, args.score, args.total_questions, args.correct_answers,
+    args.user_id,
+    args.language,
+    args.score,
+    args.total_questions,
+    args.correct_answers,
   ])
   return result.rows[0]
 }
@@ -71,8 +81,15 @@ const listUserProgressQuery = `
 SELECT * FROM user_progress WHERE user_id = $1 ORDER BY completed_at DESC LIMIT $2 OFFSET $3
 `
 
-export async function listUserProgress(client: Client, args: { user_id: string; limit: number; offset: number }): Promise<UserProgressRow[]> {
-  const result = await client.query(listUserProgressQuery, [args.user_id, args.limit, args.offset])
+export async function listUserProgress(
+  client: Client,
+  args: { user_id: string; limit: number; offset: number },
+): Promise<UserProgressRow[]> {
+  const result = await client.query(listUserProgressQuery, [
+    args.user_id,
+    args.limit,
+    args.offset,
+  ])
   return result.rows
 }
 
@@ -80,8 +97,16 @@ const listUserProgressByLanguageQuery = `
 SELECT * FROM user_progress WHERE user_id = $1 AND language = $2 ORDER BY completed_at DESC LIMIT $3 OFFSET $4
 `
 
-export async function listUserProgressByLanguage(client: Client, args: { user_id: string; language: string; limit: number; offset: number }): Promise<UserProgressRow[]> {
-  const result = await client.query(listUserProgressByLanguageQuery, [args.user_id, args.language, args.limit, args.offset])
+export async function listUserProgressByLanguage(
+  client: Client,
+  args: { user_id: string; language: string; limit: number; offset: number },
+): Promise<UserProgressRow[]> {
+  const result = await client.query(listUserProgressByLanguageQuery, [
+    args.user_id,
+    args.language,
+    args.limit,
+    args.offset,
+  ])
   return result.rows
 }
 
@@ -89,7 +114,10 @@ const listUserLanguageStatsQuery = `
 SELECT * FROM user_language_stats WHERE user_id = $1 ORDER BY total_score DESC
 `
 
-export async function listUserLanguageStats(client: Client, args: { user_id: string }): Promise<UserLanguageStatsRow[]> {
+export async function listUserLanguageStats(
+  client: Client,
+  args: { user_id: string },
+): Promise<UserLanguageStatsRow[]> {
   const result = await client.query(listUserLanguageStatsQuery, [args.user_id])
   return result.rows
 }
@@ -107,9 +135,16 @@ ON CONFLICT (user_id, language) DO UPDATE SET
 RETURNING *
 `
 
-export async function upsertUserLanguageStats(client: Client, args: UpsertUserLanguageStatsArgs): Promise<UserLanguageStatsRow> {
+export async function upsertUserLanguageStats(
+  client: Client,
+  args: UpsertUserLanguageStatsArgs,
+): Promise<UserLanguageStatsRow> {
   const result = await client.query(upsertUserLanguageStatsQuery, [
-    args.user_id, args.language, args.score, args.correct_answers, args.total_questions,
+    args.user_id,
+    args.language,
+    args.score,
+    args.correct_answers,
+    args.total_questions,
   ])
   return result.rows[0]
 }
@@ -131,7 +166,13 @@ ORDER BY uls.total_score DESC
 LIMIT $2
 `
 
-export async function getLeaderboard(client: Client, args: GetLeaderboardArgs): Promise<LeaderboardRow[]> {
-  const result = await client.query(getLeaderboardQuery, [args.language, args.limit_count])
+export async function getLeaderboard(
+  client: Client,
+  args: GetLeaderboardArgs,
+): Promise<LeaderboardRow[]> {
+  const result = await client.query(getLeaderboardQuery, [
+    args.language,
+    args.limit_count,
+  ])
   return result.rows
 }

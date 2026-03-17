@@ -1,4 +1,7 @@
-import { Client } from 'pg'
+interface Client {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  query: (text: string, values?: any[]) => Promise<{ rows: any[] }>
+}
 
 export interface QuestionAnswer {
   text: string
@@ -55,18 +58,31 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 RETURNING *
 `
 
-export async function createQuestion(client: Client, args: CreateQuestionArgs): Promise<QuestionRow> {
+export async function createQuestion(
+  client: Client,
+  args: CreateQuestionArgs,
+): Promise<QuestionRow> {
   const result = await client.query(createQuestionQuery, [
-    args.verb_id, args.tense, args.regularity, args.verb_type,
-    args.text, args.translation, JSON.stringify(args.answers),
-    args.difficulty, args.language, args.src,
+    args.verb_id,
+    args.tense,
+    args.regularity,
+    args.verb_type,
+    args.text,
+    args.translation,
+    JSON.stringify(args.answers),
+    args.difficulty,
+    args.language,
+    args.src,
   ])
   return result.rows[0]
 }
 
 const getQuestionQuery = `SELECT * FROM questions WHERE id = $1 LIMIT 1`
 
-export async function getQuestion(client: Client, args: { id: number }): Promise<QuestionRow | null> {
+export async function getQuestion(
+  client: Client,
+  args: { id: number },
+): Promise<QuestionRow | null> {
   const result = await client.query(getQuestionQuery, [args.id])
   return result.rows.length > 0 ? result.rows[0] : null
 }
@@ -75,8 +91,15 @@ const listQuestionsByLanguageQuery = `
 SELECT * FROM questions WHERE language = $1 ORDER BY id LIMIT $2 OFFSET $3
 `
 
-export async function listQuestionsByLanguage(client: Client, args: { language: string; limit: number; offset: number }): Promise<QuestionRow[]> {
-  const result = await client.query(listQuestionsByLanguageQuery, [args.language, args.limit, args.offset])
+export async function listQuestionsByLanguage(
+  client: Client,
+  args: { language: string; limit: number; offset: number },
+): Promise<QuestionRow[]> {
+  const result = await client.query(listQuestionsByLanguageQuery, [
+    args.language,
+    args.limit,
+    args.offset,
+  ])
   return result.rows
 }
 
@@ -88,8 +111,15 @@ ORDER BY RANDOM()
 LIMIT $3
 `
 
-export async function getRandomQuestions(client: Client, args: GetRandomQuestionsArgs): Promise<QuestionRow[]> {
-  const result = await client.query(getRandomQuestionsQuery, [args.language, args.difficulty, args.limit_count])
+export async function getRandomQuestions(
+  client: Client,
+  args: GetRandomQuestionsArgs,
+): Promise<QuestionRow[]> {
+  const result = await client.query(getRandomQuestionsQuery, [
+    args.language,
+    args.difficulty,
+    args.limit_count,
+  ])
   return result.rows
 }
 
@@ -104,23 +134,39 @@ WHERE id = $1
 RETURNING *
 `
 
-export async function updateQuestion(client: Client, args: UpdateQuestionArgs): Promise<QuestionRow> {
+export async function updateQuestion(
+  client: Client,
+  args: UpdateQuestionArgs,
+): Promise<QuestionRow> {
   const result = await client.query(updateQuestionQuery, [
-    args.id, args.tense, args.text, args.translation,
-    args.answers ? JSON.stringify(args.answers) : null, args.difficulty,
+    args.id,
+    args.tense,
+    args.text,
+    args.translation,
+    args.answers ? JSON.stringify(args.answers) : null,
+    args.difficulty,
   ])
   return result.rows[0]
 }
 
 const updateQuestionRatingScoreQuery = `UPDATE questions SET rating_score = $2 WHERE id = $1 RETURNING *`
 
-export async function updateQuestionRatingScore(client: Client, args: { id: number; rating_score: number }): Promise<QuestionRow> {
-  const result = await client.query(updateQuestionRatingScoreQuery, [args.id, args.rating_score])
+export async function updateQuestionRatingScore(
+  client: Client,
+  args: { id: number; rating_score: number },
+): Promise<QuestionRow> {
+  const result = await client.query(updateQuestionRatingScoreQuery, [
+    args.id,
+    args.rating_score,
+  ])
   return result.rows[0]
 }
 
 const deleteQuestionQuery = `DELETE FROM questions WHERE id = $1`
 
-export async function deleteQuestion(client: Client, args: { id: number }): Promise<void> {
+export async function deleteQuestion(
+  client: Client,
+  args: { id: number },
+): Promise<void> {
   await client.query(deleteQuestionQuery, [args.id])
 }

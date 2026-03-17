@@ -1,4 +1,7 @@
-import { Client } from 'pg'
+interface Client {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  query: (text: string, values?: any[]) => Promise<{ rows: any[] }>
+}
 
 export interface VerbRow {
   id: number
@@ -39,14 +42,24 @@ VALUES ($1, $2, $3)
 RETURNING id, name, language, infinitive, created_at, updated_at
 `
 
-export async function createVerb(client: Client, args: CreateVerbArgs): Promise<VerbRow> {
-  const result = await client.query(createVerbQuery, [args.name, args.language, args.infinitive])
+export async function createVerb(
+  client: Client,
+  args: CreateVerbArgs,
+): Promise<VerbRow> {
+  const result = await client.query(createVerbQuery, [
+    args.name,
+    args.language,
+    args.infinitive,
+  ])
   return result.rows[0]
 }
 
 const getVerbQuery = `SELECT id, name, language, infinitive, created_at, updated_at FROM verbs WHERE id = $1 LIMIT 1`
 
-export async function getVerb(client: Client, args: { id: number }): Promise<VerbRow | null> {
+export async function getVerb(
+  client: Client,
+  args: { id: number },
+): Promise<VerbRow | null> {
   const result = await client.query(getVerbQuery, [args.id])
   return result.rows.length > 0 ? result.rows[0] : null
 }
@@ -56,8 +69,15 @@ SELECT id, name, language, infinitive, created_at, updated_at
 FROM verbs WHERE language = $1 ORDER BY name ASC LIMIT $2 OFFSET $3
 `
 
-export async function listVerbsByLanguage(client: Client, args: ListVerbsByLanguageArgs): Promise<VerbRow[]> {
-  const result = await client.query(listVerbsByLanguageQuery, [args.language, args.limit, args.offset])
+export async function listVerbsByLanguage(
+  client: Client,
+  args: ListVerbsByLanguageArgs,
+): Promise<VerbRow[]> {
+  const result = await client.query(listVerbsByLanguageQuery, [
+    args.language,
+    args.limit,
+    args.offset,
+  ])
   return result.rows
 }
 
@@ -66,8 +86,14 @@ SELECT id, name, language, infinitive, created_at, updated_at
 FROM verbs ORDER BY language, name ASC LIMIT $1 OFFSET $2
 `
 
-export async function listAllVerbs(client: Client, args: ListAllVerbsArgs): Promise<VerbRow[]> {
-  const result = await client.query(listAllVerbsQuery, [args.limit, args.offset])
+export async function listAllVerbs(
+  client: Client,
+  args: ListAllVerbsArgs,
+): Promise<VerbRow[]> {
+  const result = await client.query(listAllVerbsQuery, [
+    args.limit,
+    args.offset,
+  ])
   return result.rows
 }
 
@@ -81,13 +107,24 @@ WHERE id = $1
 RETURNING id, name, language, infinitive, created_at, updated_at
 `
 
-export async function updateVerb(client: Client, args: UpdateVerbArgs): Promise<VerbRow> {
-  const result = await client.query(updateVerbQuery, [args.id, args.name, args.language, args.infinitive])
+export async function updateVerb(
+  client: Client,
+  args: UpdateVerbArgs,
+): Promise<VerbRow> {
+  const result = await client.query(updateVerbQuery, [
+    args.id,
+    args.name,
+    args.language,
+    args.infinitive,
+  ])
   return result.rows[0]
 }
 
 const deleteVerbQuery = `DELETE FROM verbs WHERE id = $1`
 
-export async function deleteVerb(client: Client, args: { id: number }): Promise<void> {
+export async function deleteVerb(
+  client: Client,
+  args: { id: number },
+): Promise<void> {
   await client.query(deleteVerbQuery, [args.id])
 }

@@ -22,19 +22,21 @@ export function EntityList({
 
   return (
     <ul className="flex max-h-96 flex-col gap-1 overflow-y-auto">
-      <li>
-        <Link
-          href={createHref}
-          className={cn(
-            'flex cursor-pointer items-center rounded-lg p-2 text-base font-medium',
-            'text-gray-900 hover:bg-gray-100',
-            'dark:text-white dark:hover:bg-gray-700',
-          )}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Add New
-        </Link>
-      </li>
+      {createHref && (
+        <li>
+          <Link
+            href={createHref}
+            className={cn(
+              'flex cursor-pointer items-center rounded-lg p-2 text-base font-medium',
+              'text-gray-900 hover:bg-gray-100',
+              'dark:text-white dark:hover:bg-gray-700',
+            )}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Add New
+          </Link>
+        </li>
+      )}
 
       {displayItems.length === 0 && searchQuery ? (
         <li

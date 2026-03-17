@@ -11,7 +11,7 @@ export interface CollapsibleSectionProps {
   title: string
   items: EntityItem[]
   icon: LucideIcon | string
-  createHref: string
+  createHref?: string
   moreHref: string
   isCollapsed: boolean
   theme?: string
@@ -31,7 +31,7 @@ export interface SectionHeaderProps {
 
 export interface EntityListProps {
   items: EntityItem[]
-  createHref: string
+  createHref?: string
   moreHref: string
   searchQuery: string
   totalCount: number

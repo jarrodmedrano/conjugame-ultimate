@@ -7,10 +7,17 @@ export async function GET(request: NextRequest) {
   const language = searchParams.get('language') || 'spanish'
   const difficulty = searchParams.get('difficulty') || ''
   const random = searchParams.get('random') === 'true'
-  const count = Math.min(Math.max(parseInt(searchParams.get('count') || '10'), 1), 20)
+  const count = Math.min(
+    Math.max(parseInt(searchParams.get('count') || '10'), 1),
+    20,
+  )
 
   if (random) {
-    const questions = await getRandomQuestionsAction(language, difficulty, count)
+    const questions = await getRandomQuestionsAction(
+      language,
+      difficulty,
+      count,
+    )
     return NextResponse.json({ questions })
   }
 

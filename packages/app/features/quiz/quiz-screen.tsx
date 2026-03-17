@@ -5,7 +5,7 @@ import { QuizSetup } from './components/QuizSetup'
 import { QuizQuestion } from './components/QuizQuestion'
 import { QuizResults } from './components/QuizResults'
 import { ProgressBar } from './components/ProgressBar'
-import { Button } from '@repo/ui/components/button'
+import { Button } from '@repo/ui/components/ui/button'
 import { useQuizSession } from './hooks/useQuizSession'
 import type { QuizSetupInput } from '@repo/schema'
 import type { QuestionRow } from '@repo/database'
@@ -15,13 +15,19 @@ interface QuizScreenProps {
   initialSetup?: QuizSetupInput
 }
 
-export function QuizScreen({ initialQuestions = [], initialSetup }: QuizScreenProps) {
+export function QuizScreen({
+  initialQuestions = [],
+  initialSetup,
+}: QuizScreenProps) {
   const router = useRouter()
   const [questions, setQuestions] = useState<QuestionRow[]>(initialQuestions)
-  const [setup, setSetup] = useState<QuizSetupInput | null>(initialSetup ?? null)
+  const [setup, setSetup] = useState<QuizSetupInput | null>(
+    initialSetup ?? null,
+  )
   const [isLoading, setIsLoading] = useState(false)
 
-  const { state, currentQuestion, selectAnswer, nextQuestion } = useQuizSession(questions)
+  const { state, currentQuestion, selectAnswer, nextQuestion } =
+    useQuizSession(questions)
 
   const handleStart = useCallback(async (config: QuizSetupInput) => {
     setIsLoading(true)
@@ -95,8 +101,10 @@ export function QuizScreen({ initialQuestions = [], initialSetup }: QuizScreenPr
   return (
     <div className="space-y-6">
       <ProgressBar current={state.currentIndex + 1} total={questions.length} />
-      <div className="flex justify-between items-center text-sm">
-        <span className="text-muted-foreground capitalize">{setup.language} • {setup.difficulty}</span>
+      <div className="flex items-center justify-between text-sm">
+        <span className="text-muted-foreground capitalize">
+          {setup.language} • {setup.difficulty}
+        </span>
         <span className="font-semibold">{state.score} pts</span>
       </div>
       <QuizQuestion
@@ -107,7 +115,9 @@ export function QuizScreen({ initialQuestions = [], initialSetup }: QuizScreenPr
       />
       {state.showResult && (
         <Button className="w-full" onClick={nextQuestion}>
-          {state.currentIndex === questions.length - 1 ? 'See Results' : 'Next Question'}
+          {state.currentIndex === questions.length - 1
+            ? 'See Results'
+            : 'Next Question'}
         </Button>
       )}
     </div>

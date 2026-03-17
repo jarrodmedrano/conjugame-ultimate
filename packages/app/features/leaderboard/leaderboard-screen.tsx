@@ -1,7 +1,13 @@
 'use client'
 import { useState } from 'react'
 import { LeaderboardTable } from './components/LeaderboardTable'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/components/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/ui/components/ui/select'
 import { SUPPORTED_LANGUAGES } from '@repo/schema'
 import type { LeaderboardRow } from '@repo/database'
 
@@ -11,9 +17,10 @@ interface LeaderboardScreenProps {
 
 export function LeaderboardScreen({ initialRows }: LeaderboardScreenProps) {
   const [language, setLanguage] = useState<string>('all')
-  const filtered = language === 'all'
-    ? initialRows
-    : initialRows.filter((r) => r.language === language)
+  const filtered =
+    language === 'all'
+      ? initialRows
+      : initialRows.filter((r) => r.language === language)
 
   return (
     <div className="space-y-6">

@@ -1,7 +1,13 @@
 'use client'
 import { useState } from 'react'
-import { Button } from '@repo/ui/components/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/components/select'
+import { Button } from '@repo/ui/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/ui/components/ui/select'
 import { SUPPORTED_LANGUAGES, DIFFICULTY_LEVELS } from '@repo/schema'
 import type { QuizSetupInput } from '@repo/schema'
 
@@ -24,7 +30,7 @@ export function QuizSetup({ onStart, isLoading }: QuizSetupProps) {
   }
 
   return (
-    <div className="space-y-6 max-w-sm mx-auto">
+    <div className="mx-auto max-w-sm space-y-6">
       <div className="space-y-2">
         <label className="text-sm font-medium">Language</label>
         <Select value={language} onValueChange={setLanguage}>
@@ -57,13 +63,18 @@ export function QuizSetup({ onStart, isLoading }: QuizSetupProps) {
       </div>
       <div className="space-y-2">
         <label className="text-sm font-medium">Number of Questions</label>
-        <Select value={String(questionCount)} onValueChange={(v) => setQuestionCount(parseInt(v))}>
+        <Select
+          value={String(questionCount)}
+          onValueChange={(v) => setQuestionCount(parseInt(v))}
+        >
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             {[5, 10, 15, 20].map((n) => (
-              <SelectItem key={n} value={String(n)}>{n} questions</SelectItem>
+              <SelectItem key={n} value={String(n)}>
+                {n} questions
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>

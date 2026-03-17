@@ -2,7 +2,11 @@
 import { listQuestionsByLanguage } from '@repo/database'
 import pool from '../../app/utils/open-pool'
 
-export default async function getQuestions(language: string, limit = 20, offset = 0) {
+export default async function getQuestions(
+  language: string,
+  limit = 20,
+  offset = 0,
+) {
   try {
     const client = await pool.connect()
     try {

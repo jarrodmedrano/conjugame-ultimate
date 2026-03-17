@@ -34,6 +34,7 @@ packages/
 ## Database Schema
 
 ### Better Auth Tables (unchanged)
+
 - `users` — add `avatar_url` for Cloudinary avatar
 - `sessions`, `accounts`, `verifications` — unchanged
 
@@ -100,6 +101,7 @@ CREATE TABLE question_ratings (
 ```
 
 ### Seed Data
+
 Initial languages: `spanish`, `english`, `portuguese`
 
 ---

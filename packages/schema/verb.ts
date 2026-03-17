@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const SUPPORTED_LANGUAGES = ['spanish', 'english', 'portuguese'] as const
-export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number]
+export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number]
 
 export const VerbSchema = z.object({
   id: z.number(),

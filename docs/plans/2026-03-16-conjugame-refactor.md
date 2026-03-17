@@ -15,6 +15,7 @@
 ## Task 1: New Git History
 
 **Files:**
+
 - Delete: `.git/` directory
 - Modify: `.gitignore` (add `conjugame/` entry)
 
@@ -29,6 +30,7 @@ git init
 **Step 2: Add conjugame reference dir to .gitignore**
 
 Add this line to `.gitignore` in the repo root:
+
 ```
 conjugame/
 ```
@@ -45,6 +47,7 @@ git commit -m "feat: initial conjugame - verb conjugation quiz game"
 ## Task 2: Rewrite Database Schema
 
 **Files:**
+
 - Modify: `apps/database/schemas/schema.sql`
 
 **Step 1: Replace schema.sql entirely**
@@ -220,6 +223,7 @@ CREATE INDEX idx_question_ratings_question_id ON question_ratings(question_id);
 Create `apps/database/migration/000001_init_conjugame.up.sql` with the same content as schema.sql above.
 
 Create `apps/database/migration/000001_init_conjugame.down.sql`:
+
 ```sql
 DROP TABLE IF EXISTS question_ratings;
 DROP TABLE IF EXISTS user_language_stats;
@@ -236,6 +240,7 @@ DROP TABLE IF EXISTS users;
 **Step 3: Create seed migration**
 
 Create `apps/database/migration/000002_seed_languages.up.sql`:
+
 ```sql
 -- Seed initial verbs for Spanish
 INSERT INTO verbs (name, language, infinitive) VALUES
@@ -271,6 +276,7 @@ INSERT INTO verbs (name, language, infinitive) VALUES
 ```
 
 Create `apps/database/migration/000002_seed_languages.down.sql`:
+
 ```sql
 DELETE FROM verbs WHERE language IN ('spanish', 'english', 'portuguese');
 ```
@@ -296,6 +302,7 @@ git commit -m "feat: replace schema with conjugame domain tables"
 ## Task 3: Rewrite SQL Queries
 
 **Files:**
+
 - Modify: `apps/database/queries/account.sql` (keep auth queries, add avatar_url, add username)
 - Modify: `apps/database/queries/subscriptions.sql` (remove entity count queries)
 - Create: `apps/database/queries/verbs.sql`
@@ -512,6 +519,7 @@ git commit -m "feat: replace SQL queries with conjugame domain queries"
 The project uses sqlc to generate TypeScript from SQL. Since we're replacing the schema, we need to write new sqlc-style TypeScript files manually (matching the pattern of existing files).
 
 **Files:**
+
 - Create: `apps/database/sqlc/verb_sql.ts`
 - Create: `apps/database/sqlc/question_sql.ts`
 - Create: `apps/database/sqlc/progress_sql.ts`
@@ -569,14 +577,24 @@ VALUES ($1, $2, $3)
 RETURNING id, name, language, infinitive, created_at, updated_at
 `
 
-export async function createVerb(client: Client, args: CreateVerbArgs): Promise<VerbRow> {
-  const result = await client.query(createVerbQuery, [args.name, args.language, args.infinitive])
+export async function createVerb(
+  client: Client,
+  args: CreateVerbArgs,
+): Promise<VerbRow> {
+  const result = await client.query(createVerbQuery, [
+    args.name,
+    args.language,
+    args.infinitive,
+  ])
   return result.rows[0]
 }
 
 const getVerbQuery = `SELECT id, name, language, infinitive, created_at, updated_at FROM verbs WHERE id = $1 LIMIT 1`
 
-export async function getVerb(client: Client, args: { id: number }): Promise<VerbRow | null> {
+export async function getVerb(
+  client: Client,
+  args: { id: number },
+): Promise<VerbRow | null> {
   const result = await client.query(getVerbQuery, [args.id])
   return result.rows.length > 0 ? result.rows[0] : null
 }
@@ -586,8 +604,15 @@ SELECT id, name, language, infinitive, created_at, updated_at
 FROM verbs WHERE language = $1 ORDER BY name ASC LIMIT $2 OFFSET $3
 `
 
-export async function listVerbsByLanguage(client: Client, args: ListVerbsByLanguageArgs): Promise<VerbRow[]> {
-  const result = await client.query(listVerbsByLanguageQuery, [args.language, args.limit, args.offset])
+export async function listVerbsByLanguage(
+  client: Client,
+  args: ListVerbsByLanguageArgs,
+): Promise<VerbRow[]> {
+  const result = await client.query(listVerbsByLanguageQuery, [
+    args.language,
+    args.limit,
+    args.offset,
+  ])
   return result.rows
 }
 
@@ -596,8 +621,14 @@ SELECT id, name, language, infinitive, created_at, updated_at
 FROM verbs ORDER BY language, name ASC LIMIT $1 OFFSET $2
 `
 
-export async function listAllVerbs(client: Client, args: ListAllVerbsArgs): Promise<VerbRow[]> {
-  const result = await client.query(listAllVerbsQuery, [args.limit, args.offset])
+export async function listAllVerbs(
+  client: Client,
+  args: ListAllVerbsArgs,
+): Promise<VerbRow[]> {
+  const result = await client.query(listAllVerbsQuery, [
+    args.limit,
+    args.offset,
+  ])
   return result.rows
 }
 
@@ -611,14 +642,25 @@ WHERE id = $1
 RETURNING id, name, language, infinitive, created_at, updated_at
 `
 
-export async function updateVerb(client: Client, args: UpdateVerbArgs): Promise<VerbRow> {
-  const result = await client.query(updateVerbQuery, [args.id, args.name, args.language, args.infinitive])
+export async function updateVerb(
+  client: Client,
+  args: UpdateVerbArgs,
+): Promise<VerbRow> {
+  const result = await client.query(updateVerbQuery, [
+    args.id,
+    args.name,
+    args.language,
+    args.infinitive,
+  ])
   return result.rows[0]
 }
 
 const deleteVerbQuery = `DELETE FROM verbs WHERE id = $1`
 
-export async function deleteVerb(client: Client, args: { id: number }): Promise<void> {
+export async function deleteVerb(
+  client: Client,
+  args: { id: number },
+): Promise<void> {
   await client.query(deleteVerbQuery, [args.id])
 }
 ```
@@ -691,18 +733,31 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 RETURNING *
 `
 
-export async function createQuestion(client: Client, args: CreateQuestionArgs): Promise<QuestionRow> {
+export async function createQuestion(
+  client: Client,
+  args: CreateQuestionArgs,
+): Promise<QuestionRow> {
   const result = await client.query(createQuestionQuery, [
-    args.verb_id, args.tense, args.regularity, args.verb_type,
-    args.text, args.translation, JSON.stringify(args.answers),
-    args.difficulty, args.language, args.src,
+    args.verb_id,
+    args.tense,
+    args.regularity,
+    args.verb_type,
+    args.text,
+    args.translation,
+    JSON.stringify(args.answers),
+    args.difficulty,
+    args.language,
+    args.src,
   ])
   return result.rows[0]
 }
 
 const getQuestionQuery = `SELECT * FROM questions WHERE id = $1 LIMIT 1`
 
-export async function getQuestion(client: Client, args: { id: number }): Promise<QuestionRow | null> {
+export async function getQuestion(
+  client: Client,
+  args: { id: number },
+): Promise<QuestionRow | null> {
   const result = await client.query(getQuestionQuery, [args.id])
   return result.rows.length > 0 ? result.rows[0] : null
 }
@@ -711,8 +766,15 @@ const listQuestionsByLanguageQuery = `
 SELECT * FROM questions WHERE language = $1 ORDER BY id LIMIT $2 OFFSET $3
 `
 
-export async function listQuestionsByLanguage(client: Client, args: ListQuestionsByLanguageArgs): Promise<QuestionRow[]> {
-  const result = await client.query(listQuestionsByLanguageQuery, [args.language, args.limit, args.offset])
+export async function listQuestionsByLanguage(
+  client: Client,
+  args: ListQuestionsByLanguageArgs,
+): Promise<QuestionRow[]> {
+  const result = await client.query(listQuestionsByLanguageQuery, [
+    args.language,
+    args.limit,
+    args.offset,
+  ])
   return result.rows
 }
 
@@ -724,8 +786,15 @@ ORDER BY RANDOM()
 LIMIT $3
 `
 
-export async function getRandomQuestions(client: Client, args: GetRandomQuestionsArgs): Promise<QuestionRow[]> {
-  const result = await client.query(getRandomQuestionsQuery, [args.language, args.difficulty, args.limit_count])
+export async function getRandomQuestions(
+  client: Client,
+  args: GetRandomQuestionsArgs,
+): Promise<QuestionRow[]> {
+  const result = await client.query(getRandomQuestionsQuery, [
+    args.language,
+    args.difficulty,
+    args.limit_count,
+  ])
   return result.rows
 }
 
@@ -740,24 +809,40 @@ WHERE id = $1
 RETURNING *
 `
 
-export async function updateQuestion(client: Client, args: UpdateQuestionArgs): Promise<QuestionRow> {
+export async function updateQuestion(
+  client: Client,
+  args: UpdateQuestionArgs,
+): Promise<QuestionRow> {
   const result = await client.query(updateQuestionQuery, [
-    args.id, args.tense, args.text, args.translation,
-    args.answers ? JSON.stringify(args.answers) : null, args.difficulty,
+    args.id,
+    args.tense,
+    args.text,
+    args.translation,
+    args.answers ? JSON.stringify(args.answers) : null,
+    args.difficulty,
   ])
   return result.rows[0]
 }
 
 const updateQuestionRatingScoreQuery = `UPDATE questions SET rating_score = $2 WHERE id = $1 RETURNING *`
 
-export async function updateQuestionRatingScore(client: Client, args: { id: number; rating_score: number }): Promise<QuestionRow> {
-  const result = await client.query(updateQuestionRatingScoreQuery, [args.id, args.rating_score])
+export async function updateQuestionRatingScore(
+  client: Client,
+  args: { id: number; rating_score: number },
+): Promise<QuestionRow> {
+  const result = await client.query(updateQuestionRatingScoreQuery, [
+    args.id,
+    args.rating_score,
+  ])
   return result.rows[0]
 }
 
 const deleteQuestionQuery = `DELETE FROM questions WHERE id = $1`
 
-export async function deleteQuestion(client: Client, args: { id: number }): Promise<void> {
+export async function deleteQuestion(
+  client: Client,
+  args: { id: number },
+): Promise<void> {
   await client.query(deleteQuestionQuery, [args.id])
 }
 ```
@@ -827,9 +912,16 @@ VALUES ($1, $2, $3, $4, $5)
 RETURNING *
 `
 
-export async function createUserProgress(client: Client, args: CreateUserProgressArgs): Promise<UserProgressRow> {
+export async function createUserProgress(
+  client: Client,
+  args: CreateUserProgressArgs,
+): Promise<UserProgressRow> {
   const result = await client.query(createUserProgressQuery, [
-    args.user_id, args.language, args.score, args.total_questions, args.correct_answers,
+    args.user_id,
+    args.language,
+    args.score,
+    args.total_questions,
+    args.correct_answers,
   ])
   return result.rows[0]
 }
@@ -838,8 +930,15 @@ const listUserProgressQuery = `
 SELECT * FROM user_progress WHERE user_id = $1 ORDER BY completed_at DESC LIMIT $2 OFFSET $3
 `
 
-export async function listUserProgress(client: Client, args: { user_id: string; limit: number; offset: number }): Promise<UserProgressRow[]> {
-  const result = await client.query(listUserProgressQuery, [args.user_id, args.limit, args.offset])
+export async function listUserProgress(
+  client: Client,
+  args: { user_id: string; limit: number; offset: number },
+): Promise<UserProgressRow[]> {
+  const result = await client.query(listUserProgressQuery, [
+    args.user_id,
+    args.limit,
+    args.offset,
+  ])
   return result.rows
 }
 
@@ -847,8 +946,16 @@ const listUserProgressByLanguageQuery = `
 SELECT * FROM user_progress WHERE user_id = $1 AND language = $2 ORDER BY completed_at DESC LIMIT $3 OFFSET $4
 `
 
-export async function listUserProgressByLanguage(client: Client, args: { user_id: string; language: string; limit: number; offset: number }): Promise<UserProgressRow[]> {
-  const result = await client.query(listUserProgressByLanguageQuery, [args.user_id, args.language, args.limit, args.offset])
+export async function listUserProgressByLanguage(
+  client: Client,
+  args: { user_id: string; language: string; limit: number; offset: number },
+): Promise<UserProgressRow[]> {
+  const result = await client.query(listUserProgressByLanguageQuery, [
+    args.user_id,
+    args.language,
+    args.limit,
+    args.offset,
+  ])
   return result.rows
 }
 
@@ -856,7 +963,10 @@ const listUserLanguageStatsQuery = `
 SELECT * FROM user_language_stats WHERE user_id = $1 ORDER BY total_score DESC
 `
 
-export async function listUserLanguageStats(client: Client, args: { user_id: string }): Promise<UserLanguageStatsRow[]> {
+export async function listUserLanguageStats(
+  client: Client,
+  args: { user_id: string },
+): Promise<UserLanguageStatsRow[]> {
   const result = await client.query(listUserLanguageStatsQuery, [args.user_id])
   return result.rows
 }
@@ -874,9 +984,16 @@ ON CONFLICT (user_id, language) DO UPDATE SET
 RETURNING *
 `
 
-export async function upsertUserLanguageStats(client: Client, args: UpsertUserLanguageStatsArgs): Promise<UserLanguageStatsRow> {
+export async function upsertUserLanguageStats(
+  client: Client,
+  args: UpsertUserLanguageStatsArgs,
+): Promise<UserLanguageStatsRow> {
   const result = await client.query(upsertUserLanguageStatsQuery, [
-    args.user_id, args.language, args.score, args.correct_answers, args.total_questions,
+    args.user_id,
+    args.language,
+    args.score,
+    args.correct_answers,
+    args.total_questions,
   ])
   return result.rows[0]
 }
@@ -898,8 +1015,14 @@ ORDER BY uls.total_score DESC
 LIMIT $2
 `
 
-export async function getLeaderboard(client: Client, args: GetLeaderboardArgs): Promise<LeaderboardRow[]> {
-  const result = await client.query(getLeaderboardQuery, [args.language, args.limit_count])
+export async function getLeaderboard(
+  client: Client,
+  args: GetLeaderboardArgs,
+): Promise<LeaderboardRow[]> {
+  const result = await client.query(getLeaderboardQuery, [
+    args.language,
+    args.limit_count,
+  ])
   return result.rows
 }
 ```
@@ -935,8 +1058,15 @@ ON CONFLICT (user_id, question_id) DO UPDATE SET rating = EXCLUDED.rating
 RETURNING *
 `
 
-export async function upsertQuestionRating(client: Client, args: UpsertQuestionRatingArgs): Promise<QuestionRatingRow> {
-  const result = await client.query(upsertQuestionRatingQuery, [args.user_id, args.question_id, args.rating])
+export async function upsertQuestionRating(
+  client: Client,
+  args: UpsertQuestionRatingArgs,
+): Promise<QuestionRatingRow> {
+  const result = await client.query(upsertQuestionRatingQuery, [
+    args.user_id,
+    args.question_id,
+    args.rating,
+  ])
   return result.rows[0]
 }
 
@@ -944,8 +1074,14 @@ const getQuestionRatingQuery = `
 SELECT * FROM question_ratings WHERE user_id = $1 AND question_id = $2 LIMIT 1
 `
 
-export async function getQuestionRating(client: Client, args: { user_id: string; question_id: number }): Promise<QuestionRatingRow | null> {
-  const result = await client.query(getQuestionRatingQuery, [args.user_id, args.question_id])
+export async function getQuestionRating(
+  client: Client,
+  args: { user_id: string; question_id: number },
+): Promise<QuestionRatingRow | null> {
+  const result = await client.query(getQuestionRatingQuery, [
+    args.user_id,
+    args.question_id,
+  ])
   return result.rows.length > 0 ? result.rows[0] : null
 }
 
@@ -954,7 +1090,10 @@ SELECT AVG(rating)::decimal AS avg_rating, COUNT(*)::int AS rating_count
 FROM question_ratings WHERE question_id = $1
 `
 
-export async function getAverageRatingForQuestion(client: Client, args: { question_id: number }): Promise<AverageRatingRow> {
+export async function getAverageRatingForQuestion(
+  client: Client,
+  args: { question_id: number },
+): Promise<AverageRatingRow> {
   const result = await client.query(getAverageRatingQuery, [args.question_id])
   return result.rows[0]
 }
@@ -1009,6 +1148,7 @@ git commit -m "feat: add conjugame sqlc TypeScript database layer"
 ## Task 5: Replace Zod Schemas
 
 **Files:**
+
 - Modify: `packages/schema/index.ts`
 - Delete: any existing story/character/location/timeline schema files in `packages/schema/`
 - Create: `packages/schema/verb.ts`
@@ -1023,7 +1163,7 @@ git commit -m "feat: add conjugame sqlc TypeScript database layer"
 import { z } from 'zod'
 
 export const SUPPORTED_LANGUAGES = ['spanish', 'english', 'portuguese'] as const
-export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number]
+export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number]
 
 export const VerbSchema = z.object({
   id: z.number(),
@@ -1059,7 +1199,7 @@ import { z } from 'zod'
 import { SUPPORTED_LANGUAGES } from './verb'
 
 export const DIFFICULTY_LEVELS = ['easy', 'medium', 'hard'] as const
-export type DifficultyLevel = typeof DIFFICULTY_LEVELS[number]
+export type DifficultyLevel = (typeof DIFFICULTY_LEVELS)[number]
 
 export const AnswerSchema = z.object({
   text: z.string().min(1),
@@ -1188,6 +1328,7 @@ git commit -m "feat: add conjugame Zod schemas"
 ## Task 6: Server Actions — Verbs
 
 **Files:**
+
 - Create: `apps/next/actions/verbs/getVerbs.ts`
 - Create: `apps/next/actions/verbs/getVerbById.ts`
 - Create: `apps/next/actions/verbs/createVerb.ts`
@@ -1203,7 +1344,11 @@ Follow the exact pattern from `apps/next/actions/story/getStories.ts`.
 import { listVerbsByLanguage, listAllVerbs } from '@repo/database'
 import pool from '../../app/utils/open-pool'
 
-export async function getVerbsByLanguage(language: string, limit = 50, offset = 0) {
+export async function getVerbsByLanguage(
+  language: string,
+  limit = 50,
+  offset = 0,
+) {
   try {
     const client = await pool.connect()
     try {
@@ -1327,6 +1472,7 @@ git commit -m "feat: add verb server actions"
 ## Task 7: Server Actions — Questions
 
 **Files:**
+
 - Create: `apps/next/actions/questions/getQuestions.ts`
 - Create: `apps/next/actions/questions/getRandomQuestions.ts`
 - Create: `apps/next/actions/questions/createQuestion.ts`
@@ -1339,7 +1485,11 @@ git commit -m "feat: add verb server actions"
 import { listQuestionsByLanguage } from '@repo/database'
 import pool from '../../app/utils/open-pool'
 
-export default async function getQuestions(language: string, limit = 20, offset = 0) {
+export default async function getQuestions(
+  language: string,
+  limit = 20,
+  offset = 0,
+) {
   try {
     const client = await pool.connect()
     try {
@@ -1437,6 +1587,7 @@ git commit -m "feat: add question server actions"
 ## Task 8: Server Actions — Quiz & Progress
 
 **Files:**
+
 - Create: `apps/next/actions/quiz/submitQuiz.ts`
 - Create: `apps/next/actions/progress/getUserProgress.ts`
 - Create: `apps/next/actions/progress/getLeaderboard.ts`
@@ -1556,6 +1707,7 @@ git commit -m "feat: add quiz and progress server actions"
 ## Task 9: Server Actions — Ratings
 
 **Files:**
+
 - Create: `apps/next/actions/ratings/rateQuestion.ts`
 
 **Step 1: Create apps/next/actions/ratings/rateQuestion.ts**
@@ -1564,7 +1716,11 @@ git commit -m "feat: add quiz and progress server actions"
 'use server'
 import { headers } from 'next/headers'
 import { auth } from '../../auth'
-import { upsertQuestionRating, getAverageRatingForQuestion, updateQuestionRatingScore } from '@repo/database'
+import {
+  upsertQuestionRating,
+  getAverageRatingForQuestion,
+  updateQuestionRatingScore,
+} from '@repo/database'
 import pool from '../../app/utils/open-pool'
 import { RateQuestionSchema } from '@repo/schema'
 
@@ -1585,14 +1741,20 @@ export default async function rateQuestion(input: unknown) {
         question_id: questionId,
         rating,
       })
-      const avgResult = await getAverageRatingForQuestion(client, { question_id: questionId })
+      const avgResult = await getAverageRatingForQuestion(client, {
+        question_id: questionId,
+      })
       if (avgResult.avg_rating) {
         await updateQuestionRatingScore(client, {
           id: questionId,
           rating_score: parseFloat(avgResult.avg_rating),
         })
       }
-      return { success: true, avgRating: avgResult.avg_rating, ratingCount: avgResult.rating_count }
+      return {
+        success: true,
+        avgRating: avgResult.avg_rating,
+        ratingCount: avgResult.rating_count,
+      }
     } finally {
       client.release()
     }
@@ -1614,6 +1776,7 @@ git commit -m "feat: add question rating server action"
 ## Task 10: Remove Old Server Actions
 
 **Files:**
+
 - Delete: `apps/next/actions/story/`
 - Delete: `apps/next/actions/character/`
 - Delete: `apps/next/actions/character-relationships/`
@@ -1648,6 +1811,7 @@ git commit -m "chore: remove story-bible server actions"
 ## Task 11: Update API Routes
 
 **Files:**
+
 - Delete: `apps/next/app/api/[entityType]/`
 - Delete: `apps/next/app/api/character/`
 - Delete: `apps/next/app/api/story/`
@@ -1679,7 +1843,10 @@ rm -rf apps/next/app/api/user-redirect
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server'
-import { getAllVerbs, getVerbsByLanguage } from '../../../actions/verbs/getVerbs'
+import {
+  getAllVerbs,
+  getVerbsByLanguage,
+} from '../../../actions/verbs/getVerbs'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -1710,7 +1877,11 @@ export async function GET(request: NextRequest) {
   const count = parseInt(searchParams.get('count') || '10')
 
   if (random) {
-    const questions = await getRandomQuestionsAction(language, difficulty, count)
+    const questions = await getRandomQuestionsAction(
+      language,
+      difficulty,
+      count,
+    )
     return NextResponse.json({ questions })
   }
 
@@ -1793,14 +1964,16 @@ export async function POST(request: NextRequest) {
 
     const uploadResult = await cloudinary.uploader.upload(dataUri, {
       folder: 'conjugame/avatars',
-      transformation: [{ width: 256, height: 256, crop: 'fill', gravity: 'face' }],
+      transformation: [
+        { width: 256, height: 256, crop: 'fill', gravity: 'face' },
+      ],
     })
 
     const client = await pool.connect()
     try {
       await client.query(
         'UPDATE users SET avatar_url = $1, "updatedAt" = NOW() WHERE id = $2',
-        [uploadResult.secure_url, authResult.user.id]
+        [uploadResult.secure_url, authResult.user.id],
       )
     } finally {
       client.release()
@@ -1826,6 +1999,7 @@ git commit -m "feat: replace API routes with conjugame endpoints"
 ## Task 12: Replace Feature Components — Quiz
 
 **Files:**
+
 - Delete: `packages/app/features/stories/`
 - Delete: `packages/app/features/characters/`
 - Delete: `packages/app/features/locations/`
@@ -1882,22 +2056,27 @@ export function useQuizSession(questions: QuestionRow[]) {
   const currentQuestion = state.questions[state.currentIndex] ?? null
   const isLastQuestion = state.currentIndex === state.questions.length - 1
 
-  const selectAnswer = useCallback((answerIndex: number) => {
-    if (state.selectedAnswer !== null) return
-    const question = state.questions[state.currentIndex]
-    if (!question) return
+  const selectAnswer = useCallback(
+    (answerIndex: number) => {
+      if (state.selectedAnswer !== null) return
+      const question = state.questions[state.currentIndex]
+      if (!question) return
 
-    const answers = question.answers as { text: string; correct: boolean }[]
-    const isCorrect = answers[answerIndex]?.correct ?? false
+      const answers = question.answers as { text: string; correct: boolean }[]
+      const isCorrect = answers[answerIndex]?.correct ?? false
 
-    setState((prev) => ({
-      ...prev,
-      selectedAnswer: answerIndex,
-      showResult: true,
-      score: isCorrect ? prev.score + 10 : prev.score,
-      correctAnswers: isCorrect ? prev.correctAnswers + 1 : prev.correctAnswers,
-    }))
-  }, [state.selectedAnswer, state.currentIndex, state.questions])
+      setState((prev) => ({
+        ...prev,
+        selectedAnswer: answerIndex,
+        showResult: true,
+        score: isCorrect ? prev.score + 10 : prev.score,
+        correctAnswers: isCorrect
+          ? prev.correctAnswers + 1
+          : prev.correctAnswers,
+      }))
+    },
+    [state.selectedAnswer, state.currentIndex, state.questions],
+  )
 
   const nextQuestion = useCallback(() => {
     if (isLastQuestion) {
@@ -2249,6 +2428,7 @@ git commit -m "feat: add quiz feature components and session hook"
 ## Task 13: Feature Components — Verbs & Leaderboard
 
 **Files:**
+
 - Create: `packages/app/features/verbs/verbs-screen.tsx`
 - Create: `packages/app/features/verbs/components/VerbsGrid.tsx`
 - Create: `packages/app/features/leaderboard/leaderboard-screen.tsx`
@@ -2432,6 +2612,7 @@ git commit -m "feat: add verbs and leaderboard feature components"
 ## Task 14: Feature Components — User Profile
 
 **Files:**
+
 - Create: `packages/app/features/user/components/LanguageStatsCard.tsx`
 - Create: `packages/app/features/user/components/QuizHistoryTable.tsx`
 - Modify: `packages/app/features/user/detail-screen.tsx` (replace story-bible profile with conjugame profile)
@@ -2540,6 +2721,7 @@ git commit -m "feat: update user profile to show conjugame language stats"
 ## Task 15: Replace App Routes
 
 **Files:**
+
 - Delete: `apps/next/app/[username]/stories/`
 - Delete: `apps/next/app/[username]/characters/`
 - Delete: `apps/next/app/[username]/locations/`
@@ -2762,6 +2944,7 @@ git commit -m "feat: add quiz, verbs, leaderboard, and user history routes"
 ## Task 16: Update Home Page
 
 **Files:**
+
 - Modify: `packages/app/features/home/screen.tsx`
 
 **Step 1: Read the current home screen**
@@ -2805,6 +2988,7 @@ git commit -m "feat: update home page for conjugame"
 ## Task 17: Update Package Metadata
 
 **Files:**
+
 - Modify: `package.json` (root)
 - Modify: `apps/next/package.json`
 - Modify: `readme.md`
@@ -2829,6 +3013,7 @@ git commit -m "chore: update package metadata for conjugame"
 ## Task 18: Final Cleanup
 
 **Files:**
+
 - Remove any remaining story-bible references
 - Update `apps/next/app/layout.tsx` title/metadata
 - Remove old tests that reference story-bible entities

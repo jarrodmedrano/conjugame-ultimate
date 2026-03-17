@@ -1,7 +1,13 @@
 'use client'
 import { useState } from 'react'
 import { VerbsGrid } from './components/VerbsGrid'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/components/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/ui/components/ui/select'
 import { SUPPORTED_LANGUAGES } from '@repo/schema'
 import type { VerbRow } from '@repo/database'
 
@@ -11,9 +17,10 @@ interface VerbsScreenProps {
 
 export function VerbsScreen({ initialVerbs }: VerbsScreenProps) {
   const [language, setLanguage] = useState<string>('all')
-  const filtered = language === 'all'
-    ? initialVerbs
-    : initialVerbs.filter((v) => v.language === language)
+  const filtered =
+    language === 'all'
+      ? initialVerbs
+      : initialVerbs.filter((v) => v.language === language)
 
   return (
     <div className="space-y-6">

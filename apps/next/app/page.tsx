@@ -1,4 +1,5 @@
-'use client'
-import { HomeScreen } from '@app/features/home/screen'
+import { redirect } from 'next/navigation'
 
-export default HomeScreen
+export default function HomePage() {
+  redirect('/quiz')
+}

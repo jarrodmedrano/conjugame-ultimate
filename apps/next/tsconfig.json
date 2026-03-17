@@ -22,6 +22,7 @@
       "@repo/ui/*": ["../../packages/ui/*"],
       "@utils/*": ["./utils"],
       "auth": ["./auth"],
+      "@repo/schema": ["../../packages/schema"],
       "@repo/schema/*": ["../../packages/schema/*"],
       "@/*": ["./*"],
       "@repo/database/*": ["../../apps/database/*"],

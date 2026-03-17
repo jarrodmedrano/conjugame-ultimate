@@ -5,7 +5,9 @@ import { createUserProgress, upsertUserLanguageStats } from '@repo/database'
 import pool from '../../app/utils/open-pool'
 import { SubmitQuizSchema } from '@repo/schema'
 
-export default async function submitQuiz(input: unknown) {
+export default async function submitQuiz(
+  input: unknown,
+): Promise<Record<string, unknown>> {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session?.user) return { error: 'Must be logged in to save progress' }
 

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import type { QuestionRow } from '@repo/database'
 
 export type QuizStatus = 'idle' | 'active' | 'complete'
@@ -24,25 +24,44 @@ export function useQuizSession(questions: QuestionRow[]) {
     showResult: false,
   })
 
+  useEffect(() => {
+    if (questions.length > 0) {
+      setState({
+        status: 'active',
+        questions,
+        currentIndex: 0,
+        score: 0,
+        correctAnswers: 0,
+        selectedAnswer: null,
+        showResult: false,
+      })
+    }
+  }, [questions])
+
   const currentQuestion = state.questions[state.currentIndex] ?? null
   const isLastQuestion = state.currentIndex === state.questions.length - 1
 
-  const selectAnswer = useCallback((answerIndex: number) => {
-    if (state.selectedAnswer !== null) return
-    const question = state.questions[state.currentIndex]
-    if (!question) return
+  const selectAnswer = useCallback(
+    (answerIndex: number) => {
+      if (state.selectedAnswer !== null) return
+      const question = state.questions[state.currentIndex]
+      if (!question) return
 
-    const answers = question.answers as { text: string; correct: boolean }[]
-    const isCorrect = answers[answerIndex]?.correct ?? false
+      const answers = question.answers as { text: string; correct: boolean }[]
+      const isCorrect = answers[answerIndex]?.correct ?? false
 
-    setState((prev) => ({
-      ...prev,
-      selectedAnswer: answerIndex,
-      showResult: true,
-      score: isCorrect ? prev.score + 10 : prev.score,
-      correctAnswers: isCorrect ? prev.correctAnswers + 1 : prev.correctAnswers,
-    }))
-  }, [state.selectedAnswer, state.currentIndex, state.questions])
+      setState((prev) => ({
+        ...prev,
+        selectedAnswer: answerIndex,
+        showResult: true,
+        score: isCorrect ? prev.score + 10 : prev.score,
+        correctAnswers: isCorrect
+          ? prev.correctAnswers + 1
+          : prev.correctAnswers,
+      }))
+    },
+    [state.selectedAnswer, state.currentIndex, state.questions],
+  )
 
   const nextQuestion = useCallback(() => {
     if (isLastQuestion) {

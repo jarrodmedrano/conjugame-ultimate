@@ -6,7 +6,9 @@ import pool from '../../app/utils/open-pool'
 
 export default async function deleteVerbAction(id: number) {
   const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.user || session.user.role !== 'admin') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sessionUser = session?.user as any
+  if (!sessionUser || sessionUser.role !== 'admin') {
     return { error: 'Unauthorized' }
   }
   try {
