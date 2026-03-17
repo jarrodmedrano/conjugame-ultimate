@@ -1,0 +1,72 @@
+name: Deploy to Dokku
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: false
+        default: 'main'
+
+jobs:
+  get-app-name:
+    runs-on: ubuntu-latest
+    outputs:
+      app_name: ${{ steps.package.outputs.result }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Read package.json
+        id: package
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            return packageJson.name;
+          result-encoding: string
+
+  deploy:
+    needs: get-app-name
+    uses: jarrodmedrano/deployer/.github/workflows/dokku-deploy-action.yml@main
+    with:
+      app_name: ${{ needs.get-app-name.outputs.app_name }}
+      branch: ${{ inputs.branch || 'main' }}
+      dockerfile_path: './apps/next/Dockerfile'
+    secrets:
+      DOKKU_HOST: ${{ secrets.DOKKU_HOST }}
+      DOKKU_DEPLOY_KEY: ${{ secrets.DOKKU_DEPLOY_KEY }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+      BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
+      NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+      DATABASE_USER: ${{ secrets.DATABASE_USER }}
+      DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+      DATABASE_SECRET: ${{ secrets.DATABASE_SECRET }}
+      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+      CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+      CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+      CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+      FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID }}
+      FACEBOOK_CLIENT_SECRET: ${{ secrets.FACEBOOK_CLIENT_SECRET }}
+      APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
+      APPLE_CLIENT_SECRET: ${{ secrets.APPLE_CLIENT_SECRET }}
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      FACEBOOK_SECRET: ${{ secrets.FACEBOOK_SECRET }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+      STRIPE_MONTHLY_PRICE_ID: ${{ secrets.STRIPE_MONTHLY_PRICE_ID }}
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+      NEXT_PUBLIC_GTM_ID: ${{ secrets.NEXT_PUBLIC_GTM_ID }}
+      API_KEY_ENCRYPTION_KEY: ${{ secrets.API_KEY_ENCRYPTION_KEY }}
+      AI_PROVIDER: ${{ secrets.AI_PROVIDER }}
+      AI_MODEL: ${{ secrets.AI_MODEL }}

@@ -1,0 +1,9 @@
+.sidebarOverflowAuto {
+  overflow: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mainContentOverflowAuto {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}

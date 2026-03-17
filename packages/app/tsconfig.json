@@ -1,0 +1,12 @@
+{
+  "extends": "../ui/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["./*"],
+      "@repo/ui/*": ["../@repo/ui/*"],
+      "@repo/schema/*": ["../@repo/schema/*"],
+      "@/*": ["./*"]
+    }
+  }
+}

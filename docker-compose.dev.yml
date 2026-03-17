@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  # database:
+  #   extends:
+  #     file: common-services.yml
+  #     service: database
+  #   volumes:
+  #     - ./apps/database:/app/apps/database
+  next:
+    extends:
+      file: common-services.yml
+      service: next
+    build:
+      context: .
+      dockerfile: ./apps/next/Dockerfile.dev
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/app
+      - ./apps/next/node_modules:/app/apps/next/node_modules
+      - /app/node_modules
+      - /app/.next
+  reverse-proxy:
+    extends:
+      file: common-services.yml
+      service: reverse-proxy
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  starter_app_network:
+    external: true

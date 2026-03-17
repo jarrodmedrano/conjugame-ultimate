@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  next:
+    extends:
+      file: common-services.yml
+      service: next
+    build:
+      context: .
+      dockerfile: ./apps/next/Dockerfile
+    environment:
+      - NODE_ENV=production
+    restart: always
+    networks:
+      - starter_app_network
+    env_file:
+      - .env.production
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  reverse-proxy:
+    extends:
+      file: common-services.yml
+      service: reverse-proxy
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./packages/config/nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/lib/letsencrypt:/var/lib/letsencrypt:ro
+    depends_on:
+      - next
+    restart: always
+    networks:
+      - starter_app_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.2'
+          memory: 256M
+
+networks:
+  starter_app_network:
+    external: true

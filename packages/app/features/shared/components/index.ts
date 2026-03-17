@@ -1,0 +1,6 @@
+export { DetailHeader } from './DetailHeader'
+export type { DetailHeaderProps } from './DetailHeader.types'
+export { DetailFooter } from './DetailFooter'
+export { EntityActions } from './EntityActions'
+export type { EntityActionsProps } from './EntityActions.types'
+export { ConfirmDialog } from './ConfirmDialog'

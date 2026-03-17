@@ -1,0 +1,68 @@
+import { NextRequest, NextResponse } from 'next/server'
+import {
+  apiAuthPrefix,
+  authRoutes,
+  publicRoutes,
+  privateRoutes,
+} from './routes'
+
+/**
+ * Middleware for route protection and auth redirects.
+ * Runs on Edge Runtime for optimal performance.
+ *
+ * Note: We check for session cookies, not database state.
+ * Actual session validation happens in route handlers.
+ */
+export async function middleware(request: NextRequest) {
+  const { nextUrl } = request
+
+  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix)
+  const isAuthRoute = authRoutes.includes(nextUrl.pathname)
+  const isPublicRoute = publicRoutes.includes(nextUrl.pathname)
+  const isPrivateRoute = privateRoutes.some((route) =>
+    nextUrl.pathname.startsWith(route),
+  )
+
+  // Let API auth routes pass through
+  if (isApiAuthRoute) {
+    return NextResponse.next()
+  }
+
+  // Check if user has session cookie (lightweight check, no database hit)
+  // better-auth uses 'better-auth.session_token' cookie by default
+  const sessionToken = request.cookies.get('better-auth.session_token')
+  const isLoggedIn = !!sessionToken
+
+  // Redirect authenticated users away from auth pages
+  if (isAuthRoute && isLoggedIn) {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  // Protect private routes - require authentication cookie
+  if (isPrivateRoute && !isLoggedIn) {
+    const callbackUrl = encodeURIComponent(nextUrl.pathname + nextUrl.search)
+    return NextResponse.redirect(
+      new URL(`/signin?callbackUrl=${callbackUrl}`, request.url),
+    )
+  }
+
+  // Allow public routes
+  if (isPublicRoute) {
+    return NextResponse.next()
+  }
+
+  // Add headers for use in pages
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-pathname', nextUrl.pathname)
+  requestHeaders.set('x-search', nextUrl.search)
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  })
+}
+
+export const config = {
+  matcher: ['/', '/((?!.+\\.[\\w]+$|_next).*)', '/(api|trpc)(.*)'],
+}

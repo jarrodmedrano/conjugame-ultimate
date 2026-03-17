@@ -1,0 +1,58 @@
+{
+  "extends": "../../packages/ui/tsconfig",
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "paths": {
+      "@app/*": ["../../packages/app/*"],
+      "@app/provider": ["../../packages/app/provider"],
+      "@repo/ui": ["../../packages/ui"],
+      "@repo/ui/*": ["../../packages/ui/*"],
+      "@utils/*": ["./utils"],
+      "auth": ["./auth"],
+      "@repo/schema/*": ["../../packages/schema/*"],
+      "@/*": ["./*"],
+      "@repo/database/*": ["../../apps/database/*"],
+      "@repo/database": ["../../apps/database"],
+      "@repo/eslint-config/*": ["../../packages/eslint-config/*"],
+      "@repo/typescript-config/*": ["../../packages/typescript-config/*"],
+      "@next-app/*": ["../../apps/next/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "app-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "next-auth.d.ts",
+    "process.d.ts",
+    "./src/**/*/*.ts",
+    "middleware.bak",
+    "proxy.bak"
+  ],
+  "exclude": [
+    "./node_modules",
+    "./dist",
+    "./.next/dev",
+    "./.next/cache",
+    "./.turbo"
+  ]
+}

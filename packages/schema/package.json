@@ -1,0 +1,23 @@
+{
+  "name": "@repo/schema",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "src": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "jarrodmedrano",
+  "license": "ISC",
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "eslint": "9.20.0",
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "zod": "3.22.4"
+  }
+}
