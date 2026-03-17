@@ -1,21 +1,5 @@
-import type { PoolClient } from 'pg'
 import pool from '../app/utils/open-pool'
-import {
-  getSubscriptionByUserId,
-  countStoriesForUser,
-  countCharactersForUser,
-  countLocationsForUser,
-  countTimelinesForUser,
-} from '@repo/database'
-
-export type EntityType = 'stories' | 'characters' | 'locations' | 'timelines'
-
-export const PREVIEW_LIMITS: Record<EntityType, number> = {
-  stories: 1,
-  characters: 10,
-  locations: 10,
-  timelines: 1,
-}
+import { getSubscriptionByUserId } from '@repo/database'
 
 export interface QuotaCheckResult {
   allowed: boolean
@@ -45,74 +29,23 @@ export async function isSubscribed(userId: string): Promise<boolean> {
 }
 
 /**
- * Core quota logic using a caller-supplied client.
- * Must be called within a transaction with an advisory lock held to prevent
- * race conditions (see entity creation routes).
+ * Stub: quota enforcement has been removed. Always returns allowed.
+ * Kept for API compatibility with any callers.
  */
-export async function checkQuotaWithClient(
-  client: PoolClient,
-  userId: string,
-  entityType: EntityType,
+export async function checkEntityQuota(
+  _userId: string,
+  _entityType: string,
 ): Promise<QuotaCheckResult> {
-  const subscription = await getSubscriptionByUserId(client, { userId })
-  const subscribed =
-    subscription?.status === 'active' || subscription?.status === 'trialing'
-  if (subscribed) {
-    return { allowed: true }
-  }
-
-  const limit = PREVIEW_LIMITS[entityType]
-  let count = 0
-
-  switch (entityType) {
-    case 'stories':
-      count = await countStoriesForUser(client, { userid: userId })
-      break
-    case 'characters':
-      count = await countCharactersForUser(client, { userid: userId })
-      break
-    case 'locations':
-      count = await countLocationsForUser(client, { userid: userId })
-      break
-    case 'timelines':
-      count = await countTimelinesForUser(client, { userid: userId })
-      break
-  }
-
-  if (count >= limit) {
-    return {
-      allowed: false,
-      reason: `Preview limit reached for ${entityType}.`,
-      limit,
-      count,
-    }
-  }
-
-  return { allowed: true, limit, count }
+  return { allowed: true }
 }
 
 /**
- * Checks whether a user can create an entity of the given type.
- * Subscribed users can always create. Preview users are subject to PREVIEW_LIMITS.
- * Fails closed on any database error.
+ * Stub: quota enforcement has been removed. Always returns allowed.
+ * Kept for API compatibility with any callers.
  */
 export async function canCreateEntity(
-  userId: string,
-  entityType: EntityType,
+  _userId: string,
+  _entityType: string,
 ): Promise<QuotaCheckResult> {
-  const client = await pool.connect()
-  try {
-    return await checkQuotaWithClient(client, userId, entityType)
-  } catch (error) {
-    console.error(
-      'Quota check failed:',
-      error instanceof Error ? error.message : 'Unknown error',
-    )
-    return {
-      allowed: false,
-      reason: 'Unable to verify subscription status. Please try again.',
-    }
-  } finally {
-    client.release()
-  }
+  return { allowed: true }
 }

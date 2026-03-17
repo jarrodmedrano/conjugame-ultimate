@@ -33,7 +33,8 @@ export default async function rateQuestion(input: unknown) {
     } finally {
       client.release()
     }
-  } catch {
+  } catch (error) {
+    console.error('Failed to rate question:', error)
     return { error: 'Failed to rate question' }
   }
 }

@@ -585,6 +585,76 @@ export async function deleteUser(
   })
 }
 
+export const getUserByUsernameQuery = `SELECT id, name, email, "emailVerified", image, avatar_url, slug, username, "createdAt", "updatedAt", role, locale, "isTwoFactorEnabled" FROM users WHERE username = $1 LIMIT 1`
+
+export interface GetUserByUsernameArgs {
+  username: string
+}
+
+export interface GetUserByUsernameRow {
+  id: string
+  name: string | null
+  email: string
+  emailverified: boolean | null
+  image: string | null
+  avatar_url: string | null
+  slug: string | null
+  username: string | null
+  createdat: Date
+  updatedat: Date
+  role: string | null
+  locale: string | null
+  istwofactorenabled: boolean | null
+}
+
+export async function getUserByUsername(
+  client: Client,
+  args: GetUserByUsernameArgs,
+): Promise<GetUserByUsernameRow | null> {
+  const result = await client.query({
+    text: getUserByUsernameQuery,
+    values: [args.username],
+    rowMode: 'array',
+  })
+  if (result.rows.length === 0) {
+    return null
+  }
+  const row = result.rows[0]
+  return {
+    id: row[0],
+    name: row[1],
+    email: row[2],
+    emailverified: row[3],
+    image: row[4],
+    avatar_url: row[5],
+    slug: row[6],
+    username: row[7],
+    createdat: row[8],
+    updatedat: row[9],
+    role: row[10],
+    locale: row[11],
+    istwofactorenabled: row[12],
+  }
+}
+
+export const checkUsernameExistsQuery = `SELECT EXISTS(SELECT 1 FROM users WHERE username = $1) AS exists`
+
+export interface CheckUsernameExistsRow {
+  exists: boolean
+}
+
+export async function checkUsernameExists(
+  client: Client,
+  args: { username: string },
+): Promise<CheckUsernameExistsRow> {
+  const result = await client.query({
+    text: checkUsernameExistsQuery,
+    values: [args.username],
+    rowMode: 'array',
+  })
+  return { exists: result.rows[0][0] }
+}
+
 export const createSessionQuery = `-- name: CreateSession :one
 INSERT INTO sessions (id, "userId", token, "expiresAt", "ipAddress", "userAgent", "createdAt", "updatedAt")
 VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())

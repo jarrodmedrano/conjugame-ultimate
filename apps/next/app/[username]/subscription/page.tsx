@@ -10,12 +10,6 @@ interface SubscriptionStatus {
   status: string
   cancelAtPeriodEnd: boolean
   currentPeriodEnd: string | null
-  previewLimits: {
-    stories: number
-    characters: number
-    locations: number
-    timelines: number
-  }
 }
 
 function formatDate(iso: string | null): string {
@@ -191,22 +185,22 @@ export default function SubscriptionPage() {
                 Cancel anytime. Your data is never deleted.
               </p>
 
-              {/* Preview limits summary */}
+              {/* Free tier benefits */}
               <div className="mt-8 rounded-lg border border-white/10 p-4">
                 <p className="text-sm font-medium text-gray-300">
-                  Preview mode limits
+                  Free tier includes
                 </p>
                 <ul className="mt-3 space-y-1 text-sm text-gray-400">
-                  <li>• {subscription?.previewLimits.stories ?? 1} story</li>
-                  <li>
-                    • {subscription?.previewLimits.characters ?? 10} characters
-                  </li>
-                  <li>
-                    • {subscription?.previewLimits.locations ?? 10} locations
-                  </li>
-                  <li>
-                    • {subscription?.previewLimits.timelines ?? 1} timeline
-                  </li>
+                  <li>• Access to all quiz questions</li>
+                  <li>• Basic progress tracking</li>
+                </ul>
+                <p className="mt-4 text-sm font-medium text-gray-300">
+                  Upgrade to Pro for
+                </p>
+                <ul className="mt-3 space-y-1 text-sm text-gray-400">
+                  <li>• Unlimited quiz sessions</li>
+                  <li>• Full leaderboard access</li>
+                  <li>• Detailed progress analytics</li>
                 </ul>
               </div>
             </div>

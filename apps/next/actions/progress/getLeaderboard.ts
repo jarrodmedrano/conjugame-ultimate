@@ -10,7 +10,8 @@ export default async function getLeaderboardAction(language = '', limit = 20) {
     } finally {
       client.release()
     }
-  } catch {
+  } catch (error) {
+    console.error('Failed to fetch leaderboard:', error)
     return []
   }
 }

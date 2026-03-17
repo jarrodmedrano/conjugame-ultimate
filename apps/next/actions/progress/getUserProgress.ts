@@ -10,7 +10,8 @@ export async function getUserLanguageStats(userId: string) {
     } finally {
       client.release()
     }
-  } catch {
+  } catch (error) {
+    console.error('Failed to fetch user language stats:', error)
     return []
   }
 }
@@ -23,7 +24,8 @@ export async function getUserHistory(userId: string, limit = 20, offset = 0) {
     } finally {
       client.release()
     }
-  } catch {
+  } catch (error) {
+    console.error('Failed to fetch user progress history:', error)
     return []
   }
 }

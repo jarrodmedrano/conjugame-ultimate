@@ -10,7 +10,8 @@ export default async function getQuestions(language: string, limit = 20, offset 
     } finally {
       client.release()
     }
-  } catch {
+  } catch (error) {
+    console.error('Failed to fetch questions:', error)
     return []
   }
 }

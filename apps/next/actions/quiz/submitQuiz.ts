@@ -17,27 +17,26 @@ export default async function submitQuiz(input: unknown) {
   try {
     const client = await pool.connect()
     try {
-      const [progress, stats] = await Promise.all([
-        createUserProgress(client, {
-          user_id: session.user.id,
-          language,
-          score,
-          total_questions: totalQuestions,
-          correct_answers: correctAnswers,
-        }),
-        upsertUserLanguageStats(client, {
-          user_id: session.user.id,
-          language,
-          score,
-          correct_answers: correctAnswers,
-          total_questions: totalQuestions,
-        }),
-      ])
+      const progress = await createUserProgress(client, {
+        user_id: session.user.id,
+        language,
+        score,
+        total_questions: totalQuestions,
+        correct_answers: correctAnswers,
+      })
+      const stats = await upsertUserLanguageStats(client, {
+        user_id: session.user.id,
+        language,
+        score,
+        correct_answers: correctAnswers,
+        total_questions: totalQuestions,
+      })
       return { progress, stats }
     } finally {
       client.release()
     }
-  } catch {
+  } catch (error) {
+    console.error('Failed to save quiz progress:', error)
     return { error: 'Failed to save quiz progress' }
   }
 }

@@ -10,7 +10,8 @@ export async function getVerbsByLanguage(language: string, limit = 50, offset = 
     } finally {
       client.release()
     }
-  } catch {
+  } catch (error) {
+    console.error('Failed to fetch verbs by language:', error)
     return []
   }
 }
@@ -23,7 +24,8 @@ export async function getAllVerbs(limit = 50, offset = 0) {
     } finally {
       client.release()
     }
-  } catch {
+  } catch (error) {
+    console.error('Failed to fetch verbs:', error)
     return []
   }
 }

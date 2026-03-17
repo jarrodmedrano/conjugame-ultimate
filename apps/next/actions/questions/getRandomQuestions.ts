@@ -18,7 +18,8 @@ export default async function getRandomQuestionsAction(
     } finally {
       client.release()
     }
-  } catch {
+  } catch (error) {
+    console.error('Failed to fetch random questions:', error)
     return []
   }
 }
