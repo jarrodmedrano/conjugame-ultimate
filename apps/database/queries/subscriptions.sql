@@ -33,17 +33,3 @@ SET status = $2,
     updated_at = NOW()
 WHERE user_id = $1
 RETURNING *;
-
--- Entity counts per user (for quota enforcement)
-
--- name: CountStoriesForUser :one
-SELECT COUNT(*) AS count FROM stories WHERE "userId" = $1;
-
--- name: CountCharactersForUser :one
-SELECT COUNT(*) AS count FROM characters WHERE "userId" = $1;
-
--- name: CountLocationsForUser :one
-SELECT COUNT(*) AS count FROM locations WHERE "userId" = $1;
-
--- name: CountTimelinesForUser :one
-SELECT COUNT(*) AS count FROM timelines WHERE "userId" = $1;
