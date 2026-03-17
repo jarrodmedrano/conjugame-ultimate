@@ -1,10 +1,7 @@
 import { headers } from 'next/headers'
 import { auth } from '../../auth'
 import { DashboardLayout } from '../../components/DashboardLayout'
-import listStoriesForUser from '../../actions/user/listStoriesForUser'
-import listCharactersForUser from '../../actions/user/listCharactersForUser'
-import listLocationsForUser from '../../actions/user/listLocationsForUser'
-import listTimelinesForUser from '../../actions/user/listTimelinesForUser'
+import { getUserLanguageStats } from '../../actions/progress/getUserProgress'
 import type { SidebarSection } from '@repo/ui/components/dashboard/sidebar-nav'
 import { resolveUsername } from '../../lib/resolve-username'
 
@@ -26,63 +23,32 @@ export default async function UserLayout({ children, params }: LayoutProps) {
     session = null
   }
 
-  const viewerid = session?.user?.id
-
-  const [stories, characters, locations, timelines] = await Promise.all([
-    listStoriesForUser({ userid: userId, viewerid }),
-    listCharactersForUser({ userid: userId, viewerid }),
-    listLocationsForUser({ userid: userId, viewerid }),
-    listTimelinesForUser({ userid: userId, viewerid }),
-  ])
+  const languageStats = await getUserLanguageStats(userId)
 
   const sections: SidebarSection[] = [
     {
-      title: 'Stories',
+      title: 'Quiz',
       icon: 'BookOpen',
-      items: stories.map((story) => ({
-        id: String(story.id),
-        name: story.title || 'Untitled',
-        slug: story.slug || String(story.id),
-        href: `/${username}/stories/${story.slug || story.id}`,
-      })),
-      createHref: '/create/stories',
-      moreHref: `/${username}/stories`,
+      items: [],
+      createHref: '/quiz',
+      moreHref: '/quiz',
     },
     {
-      title: 'Characters',
-      icon: 'Users',
-      items: characters.map((character) => ({
-        id: String(character.id),
-        name: character.name || 'Unnamed',
-        slug: character.slug || String(character.id),
-        href: `/${username}/characters/${character.slug || character.id}`,
+      title: 'Languages',
+      icon: 'Globe',
+      items: languageStats.map((stat) => ({
+        id: stat.language,
+        name: stat.language.charAt(0).toUpperCase() + stat.language.slice(1),
+        slug: stat.language,
+        href: `/${username}?language=${stat.language}`,
       })),
-      createHref: '/create/characters',
-      moreHref: `/${username}/characters`,
+      moreHref: `/${username}`,
     },
     {
-      title: 'Locations',
-      icon: 'MapPin',
-      items: locations.map((location) => ({
-        id: String(location.id),
-        name: location.name || 'Unnamed',
-        slug: location.slug || String(location.id),
-        href: `/${username}/locations/${location.slug || location.id}`,
-      })),
-      createHref: '/create/locations',
-      moreHref: `/${username}/locations`,
-    },
-    {
-      title: 'Timelines',
+      title: 'History',
       icon: 'Clock',
-      items: timelines.map((timeline) => ({
-        id: String(timeline.id),
-        name: timeline.name || 'Unnamed',
-        slug: timeline.slug || String(timeline.id),
-        href: `/${username}/timelines/${timeline.slug || timeline.id}`,
-      })),
-      createHref: '/create/timelines',
-      moreHref: `/${username}/timelines`,
+      items: [],
+      moreHref: `/${username}/history`,
     },
   ]
 

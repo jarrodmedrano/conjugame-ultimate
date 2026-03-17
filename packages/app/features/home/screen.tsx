@@ -20,19 +20,19 @@ export function HomeScreen() {
     <View>
       <Header cookies={cookies} />
       <Hero
-        title={`Your AI-Powered Story Bible`}
-        description="Build living, wiki-style story bibles with AI assistance. Craft rich characters, immersive locations, and intricate timelines. All in one place, for less than a cup of coffee a month."
+        title={`Master Verb Conjugation`}
+        description="Learn to conjugate verbs in Spanish, English, and Portuguese with interactive quizzes. Track your progress, compete on the leaderboard, and master a new language one verb at a time."
         navigation={navigation}
-        buttonLink={'/register'}
-        buttonText={'Start for free'}
-        altButtonLink={'/about/features'}
-        altButtonText={'See all features'}
-        heroButtonAltText={'See how it works'}
-        heroButtonText={'New: AI story assistant'}
-        heroButtonLink={'/about/features'}
-        companyName="Story Bible"
+        buttonLink={'/quiz'}
+        buttonText={'Start Quizzing'}
+        altButtonLink={'/leaderboard'}
+        altButtonText={'View Leaderboard'}
+        heroButtonAltText={'See all verbs'}
+        heroButtonText={'Browse Verbs'}
+        heroButtonLink={'/verbs'}
+        companyName="Conjugame"
         companyLogo={<Logo className="h-8 w-auto" />}
-        companyLink={'/create'}
+        companyLink={'/quiz'}
       />
       <FeatureList />
       <Feature />

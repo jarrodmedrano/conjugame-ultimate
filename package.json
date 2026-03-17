@@ -1,5 +1,6 @@
 {
-  "name": "storybible",
+  "name": "conjugame-ultimate",
+  "description": "Conjugame - verb conjugation quiz game monorepo",
   "version": "1.0.0",
   "private": true,
   "workspaces": [

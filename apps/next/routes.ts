@@ -1,7 +1,5 @@
 /**
- * An array of routes that are accessible to the public
- * These routes do not require authentication
- * @type {string[]}
+ * Routes that are accessible to the public (no auth required)
  */
 export const publicRoutes = [
   '/',
@@ -9,19 +7,17 @@ export const publicRoutes = [
   '/verifytoken',
   '/about',
   '/signin',
+  '/leaderboard',
+  '/verbs',
 ]
 
 /**
- * An array of routes that require authentication
- * These routes will redirect non-logged in users to /signin
- * @type {string[]}
+ * Routes that require authentication
  */
-export const privateRoutes = ['/admin', '/create']
+export const privateRoutes = ['/admin', '/quiz']
 
 /**
- * An array of routes that are used for authentication
- * These routes will redirect logged in users to /settings
- * @type {string[]}
+ * Auth-specific routes (redirect logged-in users away)
  */
 export const authRoutes = [
   '/signin',
@@ -32,17 +28,6 @@ export const authRoutes = [
   '/user',
 ]
 
-/**
- * The prefix for API authentication routes
- * Routes that start with this prefix are used for API authentication purposes
- * @type {string}
- */
 export const apiAuthPrefix = '/api/auth'
-
-/**
- * The default redirect path after logging in
- * @type {string}
- */
-export const DEFAULT_LOGIN_REDIRECT = '/'
-
+export const DEFAULT_LOGIN_REDIRECT = '/quiz'
 export const signinRoute = '/signin'

@@ -10,8 +10,8 @@ import { CookiesProvider } from 'next-client-cookies/server'
 import { Toaster } from '@repo/ui/components/ui/toaster'
 
 export const metadata: Metadata = {
-  title: 'Story Bible',
-  description: 'Your Personal Story Encyclopedia',
+  title: 'Conjugame',
+  description: 'Master verb conjugation with interactive quizzes',
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },

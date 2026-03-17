@@ -1,7 +1,6 @@
 export const navigation = [
-  { name: 'Get Started', href: '/create' },
-  { name: 'Browse', href: '/stories' },
-  { name: 'Features', href: '/about/features' },
-  { name: 'Pricing', href: '/about/pricing' },
-  { name: 'Contact', href: '/about/contact' },
+  { name: 'Home', href: '/' },
+  { name: 'Quiz', href: '/quiz' },
+  { name: 'Verbs', href: '/verbs' },
+  { name: 'Leaderboard', href: '/leaderboard' },
 ]
