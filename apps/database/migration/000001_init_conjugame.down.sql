@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS question_ratings;
+DROP TABLE IF EXISTS user_language_stats;
+DROP TABLE IF EXISTS user_progress;
+DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS verbs;
+DROP TABLE IF EXISTS subscriptions;
+DROP TABLE IF EXISTS verifications;
+DROP TABLE IF EXISTS accounts;
+DROP TABLE IF EXISTS sessions;
+DROP TABLE IF EXISTS users;
