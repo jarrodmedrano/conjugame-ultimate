@@ -22,22 +22,13 @@ describe('middleware', () => {
   })
 
   describe('private routes (unauthenticated)', () => {
-    it('redirects /create to /signin with callbackUrl when no session', async () => {
-      const req = makeRequest('/create')
+    it('redirects /quiz to /signin with callbackUrl when no session', async () => {
+      const req = makeRequest('/quiz')
       const res = await middleware(req)
       expect(res.status).toBe(307)
       const location = res.headers.get('location')!
       expect(location).toContain('/signin')
-      expect(location).toContain('callbackUrl=%2Fcreate')
-    })
-
-    it('redirects /create/stories to /signin with callbackUrl', async () => {
-      const req = makeRequest('/create/stories')
-      const res = await middleware(req)
-      expect(res.status).toBe(307)
-      const location = res.headers.get('location')!
-      expect(location).toContain('/signin')
-      expect(location).toContain('callbackUrl=%2Fcreate%2Fstories')
+      expect(location).toContain('callbackUrl=%2Fquiz')
     })
 
     it('redirects /admin to /signin with callbackUrl when no session', async () => {
@@ -51,15 +42,8 @@ describe('middleware', () => {
   })
 
   describe('private routes (authenticated)', () => {
-    it('allows /create through when session cookie is present', async () => {
-      const req = makeRequest('/create', 'valid-session-token')
-      const res = await middleware(req)
-      expect(res.status).toBe(200)
-      expect(res.headers.get('location')).toBeNull()
-    })
-
-    it('allows /create/stories through when session cookie is present', async () => {
-      const req = makeRequest('/create/stories', 'valid-session-token')
+    it('allows /quiz through when session cookie is present', async () => {
+      const req = makeRequest('/quiz', 'valid-session-token')
       const res = await middleware(req)
       expect(res.status).toBe(200)
       expect(res.headers.get('location')).toBeNull()
@@ -108,6 +92,18 @@ describe('middleware', () => {
 
     it('allows /about through without session', async () => {
       const req = makeRequest('/about')
+      const res = await middleware(req)
+      expect(res.status).toBe(200)
+    })
+
+    it('allows /leaderboard through without session', async () => {
+      const req = makeRequest('/leaderboard')
+      const res = await middleware(req)
+      expect(res.status).toBe(200)
+    })
+
+    it('allows /verbs through without session', async () => {
+      const req = makeRequest('/verbs')
       const res = await middleware(req)
       expect(res.status).toBe(200)
     })

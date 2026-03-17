@@ -122,7 +122,7 @@ export default function SubscriptionPage() {
 
       <h1 className="text-2xl font-bold text-white">Subscription</h1>
       <p className="mt-2 text-gray-400">
-        Manage your Story Bible Pro subscription.
+        Manage your Conjugame Pro subscription.
       </p>
 
       {isLoading ? (
@@ -135,7 +135,7 @@ export default function SubscriptionPage() {
               <div>
                 <p className="text-sm text-gray-400">Current plan</p>
                 <p className="mt-1 text-xl font-semibold text-white">
-                  {isSubscribed ? 'Story Bible Pro' : 'Preview (Free)'}
+                  {isSubscribed ? 'Conjugame Pro' : 'Preview (Free)'}
                 </p>
               </div>
               {subscription && <StatusBadge status={subscription.status} />}

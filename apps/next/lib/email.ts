@@ -15,12 +15,12 @@ export async function sendVerificationEmail(to: string, url: string): Promise<vo
   const { error } = await resend.emails.send({
     from: fromEmail,
     to,
-    subject: 'Verify your Story Bible account',
+    subject: 'Verify your Conjugame account',
     text: `Click the link below to verify your email address:\n\n${url}\n\nThis link expires in 1 hour.`,
     html: `
       <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
         <h2>Verify your email address</h2>
-        <p>Thanks for signing up for Story Bible. Click the button below to verify your email address.</p>
+        <p>Thanks for signing up for Conjugame. Click the button below to verify your email address.</p>
         <a
           href="${url}"
           style="display: inline-block; padding: 12px 24px; background-color: #111827; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600;"

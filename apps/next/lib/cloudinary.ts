@@ -25,5 +25,5 @@ export const CLOUDINARY_CONFIG = {
   MAX_DIMENSIONS: 1200,
   ALLOWED_FORMATS: ['jpg', 'jpeg', 'png'],
   MAX_GALLERY_SIZE: 6,
-  FOLDER: 'story-bible',
+  FOLDER: 'conjugame',
 } as const
