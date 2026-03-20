@@ -10,7 +10,6 @@ interface QuizState {
   score: number
   correctAnswers: number
   selectedAnswer: number | null
-  showResult: boolean
 }
 
 export function useQuizSession(questions: QuestionRow[]) {
@@ -21,7 +20,6 @@ export function useQuizSession(questions: QuestionRow[]) {
     score: 0,
     correctAnswers: 0,
     selectedAnswer: null,
-    showResult: false,
   })
 
   useEffect(() => {
@@ -33,7 +31,6 @@ export function useQuizSession(questions: QuestionRow[]) {
         score: 0,
         correctAnswers: 0,
         selectedAnswer: null,
-        showResult: false,
       })
     } else {
       setState((prev) => ({ ...prev, status: 'idle' }))
@@ -43,40 +40,34 @@ export function useQuizSession(questions: QuestionRow[]) {
   const currentQuestion = state.questions[state.currentIndex] ?? null
   const isLastQuestion = state.currentIndex === state.questions.length - 1
 
-  const selectAnswer = useCallback(
-    (answerIndex: number) => {
-      if (state.selectedAnswer !== null) return
-      const question = state.questions[state.currentIndex]
-      if (!question) return
-
-      const answers = question.answers
-      const isCorrect = answers[answerIndex]?.correct ?? false
-
-      setState((prev) => ({
-        ...prev,
-        selectedAnswer: answerIndex,
-        showResult: true,
-        score: isCorrect ? prev.score + 10 : prev.score,
-        correctAnswers: isCorrect
-          ? prev.correctAnswers + 1
-          : prev.correctAnswers,
-      }))
-    },
-    [state.selectedAnswer, state.currentIndex, state.questions],
-  )
+  const selectAnswer = useCallback((answerIndex: number) => {
+    setState((prev) => ({ ...prev, selectedAnswer: answerIndex }))
+  }, [])
 
   const nextQuestion = useCallback(() => {
+    if (state.selectedAnswer === null) return
+    const question = state.questions[state.currentIndex]
+    if (!question) return
+
+    const isCorrect = question.answers[state.selectedAnswer]?.correct ?? false
+
     if (isLastQuestion) {
-      setState((prev) => ({ ...prev, status: 'complete' }))
+      setState((prev) => ({
+        ...prev,
+        status: 'complete',
+        score: isCorrect ? prev.score + 10 : prev.score,
+        correctAnswers: isCorrect ? prev.correctAnswers + 1 : prev.correctAnswers,
+      }))
     } else {
       setState((prev) => ({
         ...prev,
         currentIndex: prev.currentIndex + 1,
         selectedAnswer: null,
-        showResult: false,
+        score: isCorrect ? prev.score + 10 : prev.score,
+        correctAnswers: isCorrect ? prev.correctAnswers + 1 : prev.correctAnswers,
       }))
     }
-  }, [isLastQuestion])
+  }, [isLastQuestion, state.selectedAnswer, state.currentIndex, state.questions])
 
   return { state, currentQuestion, isLastQuestion, selectAnswer, nextQuestion }
 }

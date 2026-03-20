@@ -121,10 +121,9 @@ export function QuizScreen({
       <QuizQuestion
         question={currentQuestion}
         selectedAnswer={state.selectedAnswer}
-        showResult={state.showResult}
         onSelectAnswer={selectAnswer}
       />
-      {state.showResult && (
+      {state.selectedAnswer !== null && (
         <Button className="w-full" onClick={nextQuestion}>
           {state.currentIndex === questions.length - 1
             ? 'See Results'
