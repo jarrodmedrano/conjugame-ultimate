@@ -28,7 +28,7 @@ export const SigninFormCard = ({
     ..._args
   }: {
     signInType: string
-    values: { code?: string | undefined; email: string; password: string }
+    values: { code?: string | undefined; username: string; password: string }
     callbackUrl?: string | undefined
   }) => Promise<
     | {
@@ -76,7 +76,7 @@ export const SigninFormCard = ({
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    const email = formData.get('email') as string
+    const username = formData.get('username') as string
     const password = formData.get('password') as string
 
     setErrorOrSuccess({
@@ -90,7 +90,7 @@ export const SigninFormCard = ({
         const result = await credentialsSignin({
           signInType: 'credentials',
           values: {
-            email,
+            username,
             password,
           },
           callbackUrl,
@@ -142,17 +142,17 @@ export const SigninFormCard = ({
             >
               <div>
                 <label
-                  htmlFor="email"
+                  htmlFor="username"
                   className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-200"
                 >
-                  Email
+                  Username
                 </label>
                 <div className="mt-2">
                   <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
+                    id="username"
+                    name="username"
+                    type="text"
+                    autoComplete="username"
                     required
                   />
                 </div>

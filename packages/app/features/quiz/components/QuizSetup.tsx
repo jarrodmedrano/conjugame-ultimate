@@ -14,9 +14,10 @@ import type { QuizSetupInput } from '@repo/schema'
 interface QuizSetupProps {
   onStart: (config: QuizSetupInput) => void
   isLoading?: boolean
+  noResults?: boolean
 }
 
-export function QuizSetup({ onStart, isLoading }: QuizSetupProps) {
+export function QuizSetup({ onStart, isLoading, noResults }: QuizSetupProps) {
   const [language, setLanguage] = useState<string>('spanish')
   const [difficulty, setDifficulty] = useState<string>('medium')
   const [questionCount, setQuestionCount] = useState<number>(10)
@@ -79,6 +80,12 @@ export function QuizSetup({ onStart, isLoading }: QuizSetupProps) {
           </SelectContent>
         </Select>
       </div>
+      {noResults && (
+        <p className="text-destructive text-sm">
+          No questions found for this language and difficulty. Try different
+          settings.
+        </p>
+      )}
       <Button className="w-full" onClick={handleStart} disabled={isLoading}>
         {isLoading ? 'Loading...' : 'Start Quiz'}
       </Button>

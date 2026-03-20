@@ -4,7 +4,7 @@ import { DIFFICULTY_LEVELS } from './question'
 
 export const QuizSetupSchema = z.object({
   language: z.enum(SUPPORTED_LANGUAGES),
-  difficulty: z.enum(DIFFICULTY_LEVELS).default('medium'),
+  difficulty: z.enum(DIFFICULTY_LEVELS).default('easy'),
   questionCount: z.number().int().min(5).max(20).default(10),
 })
 

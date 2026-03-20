@@ -3,6 +3,8 @@
 import { auth } from '../../auth'
 import { LoginSchema, loginSchema } from '@repo/schema/login'
 import { headers } from 'next/headers'
+import { getUserByUsername } from '@repo/database'
+import pool from '../../app/utils/open-pool'
 
 export const signInUser = async ({
   signInType,
@@ -19,7 +21,19 @@ export const signInUser = async ({
     return { error: 'Invalid fields!' }
   }
 
-  const { email, password } = validatedFields.data
+  const { username, password } = validatedFields.data
+
+  const client = await pool.connect()
+  let email: string
+  try {
+    const user = await getUserByUsername(client, { username })
+    if (!user) {
+      return { error: 'Invalid credentials!' }
+    }
+    email = user.email
+  } finally {
+    client.release()
+  }
 
   try {
     const headersList = await headers()

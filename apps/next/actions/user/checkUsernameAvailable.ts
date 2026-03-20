@@ -15,7 +15,7 @@ export default async function checkUsernameAvailable(args: {
 
   const client = await pool.connect()
   try {
-    const exists = await checkUsernameExists(client, {
+    const { exists } = await checkUsernameExists(client, {
       username: result.data,
     })
 

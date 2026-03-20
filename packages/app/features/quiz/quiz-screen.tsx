@@ -25,6 +25,7 @@ export function QuizScreen({
     initialSetup ?? null,
   )
   const [isLoading, setIsLoading] = useState(false)
+  const [fetchedEmpty, setFetchedEmpty] = useState(false)
 
   const { state, currentQuestion, selectAnswer, nextQuestion } =
     useQuizSession(questions)
@@ -41,9 +42,12 @@ export function QuizScreen({
       })
       const res = await fetch(`/api/questions?${params}`)
       const data = await res.json()
-      setQuestions(data.questions || [])
+      const fetched = data.questions || []
+      setQuestions(fetched)
+      setFetchedEmpty(fetched.length === 0)
     } catch {
       setQuestions([])
+      setFetchedEmpty(true)
     } finally {
       setIsLoading(false)
     }
@@ -52,6 +56,7 @@ export function QuizScreen({
   const handlePlayAgain = useCallback(() => {
     setQuestions([])
     setSetup(null)
+    setFetchedEmpty(false)
   }, [])
 
   const handleSubmitQuiz = useCallback(async () => {
@@ -93,7 +98,13 @@ export function QuizScreen({
   }
 
   if (questions.length === 0 || !setup) {
-    return <QuizSetup onStart={handleStart} isLoading={isLoading} />
+    return (
+      <QuizSetup
+        onStart={handleStart}
+        isLoading={isLoading}
+        noResults={fetchedEmpty}
+      />
+    )
   }
 
   if (!currentQuestion) return null

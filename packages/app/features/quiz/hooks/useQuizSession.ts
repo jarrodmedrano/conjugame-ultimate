@@ -35,6 +35,8 @@ export function useQuizSession(questions: QuestionRow[]) {
         selectedAnswer: null,
         showResult: false,
       })
+    } else {
+      setState((prev) => ({ ...prev, status: 'idle' }))
     }
   }, [questions])
 
@@ -47,7 +49,7 @@ export function useQuizSession(questions: QuestionRow[]) {
       const question = state.questions[state.currentIndex]
       if (!question) return
 
-      const answers = question.answers as { text: string; correct: boolean }[]
+      const answers = question.answers
       const isCorrect = answers[answerIndex]?.correct ?? false
 
       setState((prev) => ({
